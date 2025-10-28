@@ -37,5 +37,7 @@
 
   // 👇 Ensure TS picks up your custom declarations
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/theme/styled.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "outDir": "./dist/tsc",
+  "rootDir": "./src",
 }

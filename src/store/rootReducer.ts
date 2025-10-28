@@ -1,5 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
 // import teamReducer from '@/features/teams/teamSlice';
+// import teamReducer from '@features/teams/teamSlice'
 import teamReducer from '@features/teams/teamSlice'
 // import other slices here
 
