@@ -31,6 +31,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   build: {
-    outDir: "dist", // this is what Render will serve
+    outDir: "dist", // Render serves from here
+  },
+  preview: {
+    allowedHosts: ["web-ui-d5g8.onrender.com"], // ✅ allow your Render domain
+    port: 4173, // optional but recommended for preview
   },
 });
