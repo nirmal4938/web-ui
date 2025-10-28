@@ -10,7 +10,7 @@ export const FooterLink = styled.div`
   font-size: ${({ theme }) => theme.font.size.label};
 
   a {
-    color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.CTA_COLOR_LIGHT};
     text-decoration: none;
     margin-left: 4px;
     font-weight: 500;

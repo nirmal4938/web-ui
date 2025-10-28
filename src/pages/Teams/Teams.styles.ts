@@ -5,6 +5,6 @@ export const PageWrapper = styled.div`
 `;
 
 export const Title = styled.h1`
-  color: ${({ theme }) => theme.colors.secondary};
+  color: ${({ theme }) => theme.CTA_COLOR_LIGHT};
   font-size: 2rem;
 `;

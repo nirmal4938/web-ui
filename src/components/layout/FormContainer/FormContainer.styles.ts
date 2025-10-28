@@ -5,7 +5,7 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.BACKGROUND};
 `;
 
 export const Card = styled.div`
@@ -21,7 +21,7 @@ export const Card = styled.div`
   h2 {
     font-size: ${({ theme }) => theme.font.size.h2};
     text-align: center;
-    color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.CTA_COLOR_LIGHT};
     margin-bottom: ${({ theme }) => theme.spacing(1)};
   }
 `;
