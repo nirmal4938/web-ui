@@ -11,6 +11,10 @@ import AuthGuard from "@components/guards/AuthGuard";
 import AboutPage from "@pages/About/AboutPage";
 import ContactPage from "@pages/Contact/ContactPage";
 import HomePage from "@/pages/Home/HomePage";
+import TermsPage from "@/pages/policies/TermsPage";
+import PrivacyPage from "@/pages/policies/PrivacyPage";
+import RefundPolicyPage from "@/pages/policies/RefundPolicyPage";
+import ShippingPolicyPage from "@/pages/policies/ShippingPolicyPage";
 
 // ⚡ Replace with Redux, Zustand, or Context in production
 const isAuthenticated = false;
@@ -19,6 +23,47 @@ const AppRoutes = () => (
   <BrowserRouter>
     <Routes>
       {/* --- Public / No Auth Routes --- */}
+            <Route
+        path="/terms"
+        element={
+          <NoAuthLayout>
+            <TermsPage />
+          </NoAuthLayout>
+        }
+      />
+            <Route
+        path="/privacy"
+        element={
+          <NoAuthLayout>
+            <PrivacyPage />
+          </NoAuthLayout>
+        }
+      />
+            <Route
+        path="/refund-policy"
+        element={
+          <NoAuthLayout>
+            <RefundPolicyPage />
+          </NoAuthLayout>
+        }
+      />
+            <Route
+        path="/shipping-policy"
+        element={
+          <NoAuthLayout>
+            <ShippingPolicyPage />
+          </NoAuthLayout>
+        }
+      />
+      
+            <Route
+        path="/home-page"
+        element={
+          <NoAuthLayout>
+            <HomePage />
+          </NoAuthLayout>
+        }
+      />
       <Route
         path="/register"
         element={

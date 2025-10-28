@@ -143,22 +143,57 @@ const Content = styled.main`
 `;
 
 const Footer = styled.footer`
+  background: #0a2540;
+  color: #ffffff;
+  padding: 48px 24px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  font-size: 0.9rem;
-  padding: 16px;
-  color: #666;
-  border-top: 1px solid #ddd;
-  background: #fafafa;
+
+  .footer-grid {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  h4 {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: #ffffff;
+  }
 
   a {
-    margin: 0 8px;
-    color: ${({ theme }) => theme.CTA_COLOR || "#0a66c2"};
+    display: block;
+    color: #d1e0ff;
+    font-size: 0.95rem;
     text-decoration: none;
+    margin: 6px 0;
+    transition: all 0.2s ease;
   }
+
   a:hover {
+    color: #ffffff;
     text-decoration: underline;
   }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 12px;
+    font-size: 0.85rem;
+    color: #b0c4de;
+  }
+
+  @media (max-width: 768px) {
+    text-align: center;
+  }
 `;
+
 
 const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
   return (
@@ -174,20 +209,63 @@ const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
 
       <Content>{children}</Content>
 
-      <Footer>
-        <div>© {new Date().getFullYear()} Synqware Technologies. All rights reserved.</div>
-        <div>
-          <Link to="/about">About</Link> |{" "}
-          <Link to="/contact">Contact</Link> |{" "}
-          <a
-            href="https://your-render-domain.onrender.com/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Privacy Policy
-          </a>
-        </div>
-      </Footer>
+    <Footer>
+  <div className="footer-grid">
+    {/* Column 1: Company */}
+    <div>
+      <h4>Synqware Technologies</h4>
+      <p className="text-sm text-gray-300">
+        Building secure and scalable SaaS solutions for teams, enterprises, and innovators.  
+        Empowering digital workflows with simplicity and trust.
+      </p>
+    </div>
+
+    {/* Column 2: Quick Links */}
+    <div>
+      <h4>Quick Links</h4>
+      <Link to="/home-page">Home</Link>
+      <Link to="/about-us">About Us</Link>
+      <Link to="/contact">Contact</Link>
+      <Link to="/login">Login / Register</Link>
+    </div>
+
+    {/* Column 3: Legal */}
+    <div>
+      <h4>Legal</h4>
+      <Link to="/terms">Terms & Conditions</Link>
+      <Link to="/privacy">Privacy Policy</Link>
+      <Link to="/refund-policy">Refund & Cancellation</Link>
+      <Link to="/shipping-policy">Shipping Policy</Link>
+    </div>
+
+    {/* Column 4: Connect */}
+    <div>
+      <h4>Connect</h4>
+      <a href="mailto:support@synqware.in">support@synqware.in</a>
+      <a
+        href="https://linkedin.com/company/synqware"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        LinkedIn
+      </a>
+      <a
+        href="https://twitter.com/synqware"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Twitter / X
+      </a>
+    </div>
+  </div>
+
+  <div className="footer-bottom">
+    © {new Date().getFullYear()} Synqware Technologies Pvt. Ltd. | All rights reserved.  
+    <br />
+    Built with ❤️ for the SaaS ecosystem.
+  </div>
+</Footer>
+
     </Wrapper>
   );
 };
