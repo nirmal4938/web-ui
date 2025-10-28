@@ -13,12 +13,14 @@ const UploadWrapper = styled.div<UploadWrapperProps>`
   flex-direction: ${({ direction }) => direction || "column"};
   align-items: ${({ direction }) => (direction === "row" ? "center" : "flex-start")};
   gap: 8px;
+  width: 100%;
 `;
 
 const Label = styled.label`
   font-size: 14px;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
   display: block;
 `;
 
@@ -75,8 +77,8 @@ interface ImageUploaderProps {
   onChange: (file: File | null) => void;
   accept?: string;
   direction?: "row" | "column";
-  inputFlex?: number; // e.g., 8
-  previewFlex?: number; // e.g., 2
+  inputFlex?: number;
+  previewFlex?: number;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -110,37 +112,42 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   };
 
   return (
-    <UploadWrapper direction={direction} inputFlex={inputFlex} previewFlex={previewFlex}>
-      <DropArea
-        isDragOver={isDragOver}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setIsDragOver(true);
-        }}
-        onDragLeave={() => setIsDragOver(false)}
-        onDrop={handleDrop}
-        onClick={() => document.getElementById("file-input")?.click()}
-        style={{ flex: inputFlex }}
-      >
-        {preview ? "Click to change or drag & drop" : "Drag & drop image here, or click to select"}
-        <input
-          id="file-input"
-          type="file"
-          accept={accept}
-          style={{ display: "none" }}
-          onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
-        />
-      </DropArea>
+    <div style={{ width: "100%" }}>
+      {/* ✅ Added label rendering */}
+      {label && <Label>{label}</Label>}
 
-      {preview && (
-        <PreviewContainer flex={previewFlex}>
-          <PreviewImage src={preview} alt="Preview" />
-          <RemoveButton onClick={() => handleFileChange(null)}>
-            <X size={12} />
-          </RemoveButton>
-        </PreviewContainer>
-      )}
-    </UploadWrapper>
+      <UploadWrapper direction={direction} inputFlex={inputFlex} previewFlex={previewFlex}>
+        <DropArea
+          isDragOver={isDragOver}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragOver(true);
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={handleDrop}
+          onClick={() => document.getElementById("file-input")?.click()}
+          style={{ flex: inputFlex }}
+        >
+          {preview ? "Click to change or drag & drop" : "Drag & drop image here, or click to select"}
+          <input
+            id="file-input"
+            type="file"
+            accept={accept}
+            style={{ display: "none" }}
+            onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
+          />
+        </DropArea>
+
+        {preview && (
+          <PreviewContainer flex={previewFlex}>
+            <PreviewImage src={preview} alt="Preview" />
+            <RemoveButton onClick={() => handleFileChange(null)}>
+              <X size={12} />
+            </RemoveButton>
+          </PreviewContainer>
+        )}
+      </UploadWrapper>
+    </div>
   );
 };
 

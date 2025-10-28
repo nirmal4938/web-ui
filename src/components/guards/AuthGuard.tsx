@@ -11,7 +11,7 @@ interface AuthGuardProps {
 const AuthGuard: React.FC<AuthGuardProps> = ({
   children,
   isAuthenticated,
-  redirectTo = "/login",
+  redirectTo = "/home-page",
 }) => {
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} replace />;

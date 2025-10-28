@@ -1,3 +1,4 @@
+// src/AppRoutes.tsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "@pages/Home";
 import Teams from "@pages/Teams";
@@ -5,16 +6,19 @@ import NotFound from "@pages/NotFound";
 import MainLayout from "@layouts/MainLayout";
 import NoAuthLayout from "@layouts/NoAuthLayout";
 import RegisterModalPage from "@pages/Register/RegisterModalPage";
+import LoginPage from "@pages/Login/LoginPage";
 import AuthGuard from "@components/guards/AuthGuard";
-import LoginPage from "@/pages/Login/LoginPage";
+import AboutPage from "@pages/About/AboutPage";
+import ContactPage from "@pages/Contact/ContactPage";
+import HomePage from "@/pages/Home/HomePage";
 
-// Simulated auth state (replace with your Redux or Context auth)
+// ⚡ Replace with Redux, Zustand, or Context in production
 const isAuthenticated = false;
 
 const AppRoutes = () => (
   <BrowserRouter>
     <Routes>
-      {/* Public / No Auth routes */}
+      {/* --- Public / No Auth Routes --- */}
       <Route
         path="/register"
         element={
@@ -23,9 +27,40 @@ const AppRoutes = () => (
           </NoAuthLayout>
         }
       />
-      <Route path="/login" element={<NoAuthLayout><LoginPage /></NoAuthLayout>} />
+      <Route
+        path="/home-page"
+        element={
+          <NoAuthLayout>
+            <HomePage />
+          </NoAuthLayout>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <NoAuthLayout>
+            <LoginPage />
+          </NoAuthLayout>
+        }
+      />
+      <Route
+        path="/about-us"
+        element={
+          <NoAuthLayout>
+            <AboutPage />
+          </NoAuthLayout>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <NoAuthLayout>
+            <ContactPage />
+          </NoAuthLayout>
+        }
+      />
 
-      {/* Protected routes */}
+      {/* --- Protected Routes --- */}
       <Route
         path="/"
         element={
@@ -36,7 +71,6 @@ const AppRoutes = () => (
           </AuthGuard>
         }
       />
-
       <Route
         path="/teams"
         element={
@@ -48,13 +82,13 @@ const AppRoutes = () => (
         }
       />
 
-      {/* Fallback */}
+      {/* --- Fallback Route --- */}
       <Route
         path="*"
         element={
-          <MainLayout>
+          <NoAuthLayout>
             <NotFound />
-          </MainLayout>
+          </NoAuthLayout>
         }
       />
     </Routes>

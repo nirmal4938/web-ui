@@ -94,188 +94,189 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <Formik
-      initialValues={{
-        name: "",
-        email: "",
-        phone: "",
-        otp: "",
-        password: "",
-        confirmPassword: "",
-        agreeToTerms: false,
-        otpSent: false,
-        logo: null,
-        paymentConfirmed: false
-      }}
-      validationSchema={RegisterSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ values, handleChange, setFieldValue }) => (
-        <FormWrapper as={Form}>
-          <FormSection>
-            <div className="form-body">
-              {/* --- Basic Details --- */}
-              <Field
-                as={InputField}
-                label="Organization Name"
-                name="name"
-                onChange={handleChange}
-              />
-              <ErrorMessage name="name" component={ErrorText} />
+    <PaymentForm amount={1} onSuccess={(id) => console.log("Payment ID:", id)} />
+    // <Formik
+    //   initialValues={{
+    //     name: "",
+    //     email: "",
+    //     phone: "",
+    //     otp: "",
+    //     password: "",
+    //     confirmPassword: "",
+    //     agreeToTerms: false,
+    //     otpSent: false,
+    //     logo: null,
+    //     paymentConfirmed: false
+    //   }}
+    //   validationSchema={RegisterSchema}
+    //   onSubmit={handleSubmit}
+    // >
+    //   {({ values, handleChange, setFieldValue }) => (
+    //     <FormWrapper as={Form}>
+    //       <FormSection>
+    //         <div className="form-body">
+    //           {/* --- Basic Details --- */}
+    //           <Field
+    //             as={InputField}
+    //             label="Organization Name"
+    //             name="name"
+    //             onChange={handleChange}
+    //           />
+    //           <ErrorMessage name="name" component={ErrorText} />
 
-              <Field
-                as={InputField}
-                label="Email"
-                name="email"
-                type="email"
-                onChange={handleChange}
-              />
-              <ErrorMessage name="email" component={ErrorText} />
+    //           <Field
+    //             as={InputField}
+    //             label="Email"
+    //             name="email"
+    //             type="email"
+    //             onChange={handleChange}
+    //           />
+    //           <ErrorMessage name="email" component={ErrorText} />
 
-              {/* --- Logo Upload --- */}
-                <Field
-                name="logo"
-                component={FormikImageUploader}
-                label="Organization Logo"
-                />
+    //           {/* --- Logo Upload --- */}
+    //             <Field
+    //             name="logo"
+    //             component={FormikImageUploader}
+    //             label="Organization Logo"
+    //             />
 
-              {/* --- Mobile + OTP --- */}
-              <div
-                className="form-row"
-                style={{
-                  display: "flex",
-                  alignItems: "flex-end",
-                  gap: "8px",
-                  width: "100%",
-                  flexWrap: "nowrap",
-                }}
-              >
-                <div style={{ flex: 1 }}>
-                  <Field
-                    as={InputField}
-                    label="Mobile Number"
-                    name="phone"
-                    placeholder="Enter 10-digit number"
-                    value={values.phone}
-                    onChange={handleChange}
-                  />
-                  <ErrorMessage name="phone" component={ErrorText} />
-                </div>
+    //           {/* --- Mobile + OTP --- */}
+    //           <div
+    //             className="form-row"
+    //             style={{
+    //               display: "flex",
+    //               alignItems: "flex-end",
+    //               gap: "8px",
+    //               width: "100%",
+    //               flexWrap: "nowrap",
+    //             }}
+    //           >
+    //             <div style={{ flex: 1 }}>
+    //               <Field
+    //                 as={InputField}
+    //                 label="Mobile Number"
+    //                 name="phone"
+    //                 placeholder="Enter 10-digit number"
+    //                 value={values.phone}
+    //                 onChange={handleChange}
+    //               />
+    //               <ErrorMessage name="phone" component={ErrorText} />
+    //             </div>
 
-                <div style={{ flexShrink: 0 }}>
-                  <ButtonPrimary
-                    type="button"
-                    disabled={loading || otpSent}
-                    onClick={() => handleSendOtp(values.phone)}
-                    style={{
-                      height: "42px",
-                      minWidth: "110px",
-                      marginBottom: "2px",
-                    }}
-                  >
-                    {otpSent ? "Sent" : "Send OTP"}
-                  </ButtonPrimary>
-                </div>
-              </div>
+    //             <div style={{ flexShrink: 0 }}>
+    //               <ButtonPrimary
+    //                 type="button"
+    //                 disabled={loading || otpSent}
+    //                 onClick={() => handleSendOtp(values.phone)}
+    //                 style={{
+    //                   height: "42px",
+    //                   minWidth: "110px",
+    //                   marginBottom: "2px",
+    //                 }}
+    //               >
+    //                 {otpSent ? "Sent" : "Send OTP"}
+    //               </ButtonPrimary>
+    //             </div>
+    //           </div>
 
-              {/* --- OTP Verification --- */}
-              {otpSent && !otpVerified && (
-                <div
-                  className="form-row"
-                  style={{
-                    display: "flex",
-                    gap: "8px",
-                    alignItems: "flex-end",
-                    width: "100%",
-                    marginTop: "8px",
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <Field
-                      as={InputField}
-                      label="Enter OTP"
-                      name="otp"
-                      placeholder="6-digit code"
-                      value={values.otp}
-                      onChange={handleChange}
-                    />
-                    <ErrorMessage name="otp" component={ErrorText} />
-                  </div>
-                  <div style={{ flexShrink: 0 }}>
-                    <ButtonPrimary
-                      type="button"
-                      onClick={() => handleVerifyOtp(values.otp)}
-                      style={{
-                        height: "42px",
-                        minWidth: "110px",
-                        marginBottom: "2px",
-                      }}
-                    >
-                      Verify
-                    </ButtonPrimary>
-                  </div>
-                </div>
-              )}
+    //           {/* --- OTP Verification --- */}
+    //           {otpSent && !otpVerified && (
+    //             <div
+    //               className="form-row"
+    //               style={{
+    //                 display: "flex",
+    //                 gap: "8px",
+    //                 alignItems: "flex-end",
+    //                 width: "100%",
+    //                 marginTop: "8px",
+    //               }}
+    //             >
+    //               <div style={{ flex: 1 }}>
+    //                 <Field
+    //                   as={InputField}
+    //                   label="Enter OTP"
+    //                   name="otp"
+    //                   placeholder="6-digit code"
+    //                   value={values.otp}
+    //                   onChange={handleChange}
+    //                 />
+    //                 <ErrorMessage name="otp" component={ErrorText} />
+    //               </div>
+    //               <div style={{ flexShrink: 0 }}>
+    //                 <ButtonPrimary
+    //                   type="button"
+    //                   onClick={() => handleVerifyOtp(values.otp)}
+    //                   style={{
+    //                     height: "42px",
+    //                     minWidth: "110px",
+    //                     marginBottom: "2px",
+    //                   }}
+    //                 >
+    //                   Verify
+    //                 </ButtonPrimary>
+    //               </div>
+    //             </div>
+    //           )}
 
-              {/* --- Dynamic Message --- */}
-              {otpMessage && (
-                <p
-                  style={{
-                    color: otpVerified ? "green" : "#cc8800",
-                    fontSize: "14px",
-                    marginTop: "6px",
-                  }}
-                >
-                  {otpMessage}
-                </p>
-              )}
-              {otpVerified && !values.paymentConfirmed && (
-                <PaymentForm
-                  amount={499}
-                  onSuccess={(paymentId) => {
-                    setFieldValue("paymentConfirmed", true);
-                    setFieldValue("paymentId", paymentId);
-                  }}
-                />
-              )}
-              {/* --- Passwords --- */}
-              <Field
-                as={PasswordField}
-                label="Password"
-                name="password"
-                onChange={handleChange}
-              />
-              <ErrorMessage name="password" component={ErrorText} />
+    //           {/* --- Dynamic Message --- */}
+    //           {otpMessage && (
+    //             <p
+    //               style={{
+    //                 color: otpVerified ? "green" : "#cc8800",
+    //                 fontSize: "14px",
+    //                 marginTop: "6px",
+    //               }}
+    //             >
+    //               {otpMessage}
+    //             </p>
+    //           )}
+    //           {otpVerified && !values.paymentConfirmed && (
+    //             <PaymentForm
+    //               amount={499}
+    //               onSuccess={(paymentId) => {
+    //                 setFieldValue("paymentConfirmed", true);
+    //                 setFieldValue("paymentId", paymentId);
+    //               }}
+    //             />
+    //           )}
+    //           {/* --- Passwords --- */}
+    //            <Field
+    //             as={PasswordField}
+    //             label="Password"
+    //             name="password"
+    //             onChange={handleChange}
+    //           />
+    //           <ErrorMessage name="password" component={ErrorText} />
 
-              <Field
-                as={PasswordField}
-                label="Confirm Password"
-                name="confirmPassword"
-                onChange={handleChange}
-              />
-              <ErrorMessage name="confirmPassword" component={ErrorText} />
+    //           <Field
+    //             as={PasswordField}
+    //             label="Confirm Password"
+    //             name="confirmPassword"
+    //             onChange={handleChange}
+    //           /> 
+    //           <ErrorMessage name="confirmPassword" component={ErrorText} />
 
-              {/* --- Terms --- */}
-              <CheckboxRow>
-                <Field
-                  as={Checkbox}
-                  label="I agree to Terms"
-                  name="agreeToTerms"
-                  checked={values.agreeToTerms}
-                  onChange={handleChange}
-                />
-                <ErrorMessage name="agreeToTerms" component={ErrorText} />
-              </CheckboxRow>
+    //           {/* --- Terms --- */}
+    //           <CheckboxRow>
+    //             <Field
+    //               as={Checkbox}
+    //               label="I agree to Terms"
+    //               name="agreeToTerms"
+    //               checked={values.agreeToTerms}
+    //               onChange={handleChange}
+    //             />
+    //             <ErrorMessage name="agreeToTerms" component={ErrorText} />
+    //           </CheckboxRow>
 
-              {/* --- Submit --- */}
-              <ButtonPrimary type="submit" disabled={loading}>
-                {loading ? "Processing..." : "Register"}
-              </ButtonPrimary>
-            </div>
-          </FormSection>
-        </FormWrapper>
-      )}
-    </Formik>
+    //           {/* --- Submit --- */}
+    //           <ButtonPrimary type="submit" disabled={loading}>
+    //             {loading ? "Processing..." : "Register"}
+    //           </ButtonPrimary>
+    //         </div>
+    //       </FormSection>
+    //     </FormWrapper>
+    //   )}
+    // </Formik>
   );
 };
 
