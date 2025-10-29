@@ -72,14 +72,7 @@ const AppRoutes = () => (
           </NoAuthLayout>
         }
       />
-      <Route
-        path="/home-page"
-        element={
-          <NoAuthLayout>
-            <HomePage />
-          </NoAuthLayout>
-        }
-      />
+     
       <Route
         path="/login"
         element={
@@ -106,6 +99,15 @@ const AppRoutes = () => (
       />
 
       {/* --- Protected Routes --- */}
+       {/* <Route
+        path="/dashboard"
+        element={
+          
+          <NoAuthLayout>
+            <Home />
+          </NoAuthLayout>
+        }
+      /> */}
       <Route
         path="/"
         element={

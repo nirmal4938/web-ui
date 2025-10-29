@@ -239,7 +239,7 @@ const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
     </div>
 
     {/* Column 4: Connect */}
-    <div>
+    {/* <div>
       <h4>Connect</h4>
       <a href="mailto:support@synqware.in">support@synqware.in</a>
       <a
@@ -256,13 +256,14 @@ const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
       >
         Twitter / X
       </a>
-    </div>
+    </div> */}
   </div>
 
   <div className="footer-bottom">
-    © {new Date().getFullYear()} Synqware Technologies Pvt. Ltd. | All rights reserved.  
+    © {new Date().getFullYear()} 
+    {/* Synqware Technologies Pvt. Ltd. | All rights reserved.   */}
     <br />
-    Built with ❤️ for the SaaS ecosystem.
+    {/* Built with ❤️ for the SaaS ecosystem. */}
   </div>
 </Footer>
 
