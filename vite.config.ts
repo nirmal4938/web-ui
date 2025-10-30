@@ -32,7 +32,7 @@ export default defineConfig({
     outDir: "dist", // Render serves from here
   },
   preview: {
-    allowedHosts: ["web-ui-d5g8.onrender.com"], // ✅ allow your Render domain
+    allowedHosts: ["web-ui-d5g8.onrender.com", "syncware.fun"], // ✅ allow your Render domain
     port: 4173, // optional but recommended for preview
   },
 });
