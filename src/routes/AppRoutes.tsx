@@ -1,145 +1,114 @@
 // src/AppRoutes.tsx
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+// Layouts
+import MainLayout from "@layouts/MainLayout";
+import NoAuthLayout from "@layouts/NoAuthLayout";
+
+// Pages
 import Home from "@pages/Home";
 import Teams from "@pages/Teams";
 import NotFound from "@pages/NotFound";
-import MainLayout from "@layouts/MainLayout";
-import NoAuthLayout from "@layouts/NoAuthLayout";
 import RegisterModalPage from "@pages/Register/RegisterModalPage";
 import LoginPage from "@pages/Login/LoginPage";
-import AuthGuard from "@components/guards/AuthGuard";
 import AboutPage from "@pages/About/AboutPage";
 import ContactPage from "@pages/Contact/ContactPage";
-import HomePage from "@/pages/Home/HomePage";
-import TermsPage from "@/pages/policies/TermsPage";
-import PrivacyPage from "@/pages/policies/PrivacyPage";
-import RefundPolicyPage from "@/pages/policies/RefundPolicyPage";
-import ShippingPolicyPage from "@/pages/policies/ShippingPolicyPage";
+import HomePage from "@pages/Home/HomePage";
+import TermsPage from "@pages/policies/TermsPage";
+import PrivacyPage from "@pages/policies/PrivacyPage";
+import RefundPolicyPage from "@pages/policies/RefundPolicyPage";
+import ShippingPolicyPage from "@pages/policies/ShippingPolicyPage";
 
-// ⚡ Replace with Redux, Zustand, or Context in production
-const isAuthenticated = false;
+// Guards
+import ProtectedRoute from "./ProtectedRoute";
+import PublicRoute from "./ProtectedRoute";
 
-const AppRoutes = () => (
-  <BrowserRouter>
-    <Routes>
-      {/* --- Public / No Auth Routes --- */}
-            <Route
-        path="/terms"
-        element={
-          <NoAuthLayout>
-            <TermsPage />
-          </NoAuthLayout>
-        }
-      />
-            <Route
-        path="/privacy"
-        element={
-          <NoAuthLayout>
-            <PrivacyPage />
-          </NoAuthLayout>
-        }
-      />
-            <Route
-        path="/refund-policy"
-        element={
-          <NoAuthLayout>
-            <RefundPolicyPage />
-          </NoAuthLayout>
-        }
-      />
-            <Route
-        path="/shipping-policy"
-        element={
-          <NoAuthLayout>
-            <ShippingPolicyPage />
-          </NoAuthLayout>
-        }
-      />
-      
-            <Route
-        path="/home-page"
-        element={
-          <NoAuthLayout>
-            <HomePage />
-          </NoAuthLayout>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <NoAuthLayout>
-            <RegisterModalPage />
-          </NoAuthLayout>
-        }
-      />
-     
-      <Route
-        path="/login"
-        element={
-          <NoAuthLayout>
-            <LoginPage />
-          </NoAuthLayout>
-        }
-      />
-      <Route
-        path="/about-us"
-        element={
-          <NoAuthLayout>
-            <AboutPage />
-          </NoAuthLayout>
-        }
-      />
-      <Route
-        path="/contact"
-        element={
-          <NoAuthLayout>
-            <ContactPage />
-          </NoAuthLayout>
-        }
-      />
+// Redux selector
+import { selectIsAuthenticated } from "@state/selectors/authSelectors";
 
-      {/* --- Protected Routes --- */}
-       {/* <Route
-        path="/dashboard"
-        element={
-          
-          <NoAuthLayout>
-            <Home />
-          </NoAuthLayout>
-        }
-      /> */}
-      <Route
-        path="/"
-        element={
-          <AuthGuard isAuthenticated={isAuthenticated}>
-            <MainLayout>
-              <Home />
-            </MainLayout>
-          </AuthGuard>
-        }
-      />
-      <Route
-        path="/teams"
-        element={
-          <AuthGuard isAuthenticated={isAuthenticated}>
-            <MainLayout>
-              <Teams />
-            </MainLayout>
-          </AuthGuard>
-        }
-      />
+const AppRoutes: React.FC = () => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
-      {/* --- Fallback Route --- */}
-      <Route
-        path="*"
-        element={
-          <NoAuthLayout>
-            <NotFound />
-          </NoAuthLayout>
-        }
-      />
-    </Routes>
-  </BrowserRouter>
-);
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* --- Public Info Pages --- */}
+        {[
+          { path: "/terms", element: <TermsPage /> },
+          { path: "/privacy", element: <PrivacyPage /> },
+          { path: "/refund-policy", element: <RefundPolicyPage /> },
+          { path: "/shipping-policy", element: <ShippingPolicyPage /> },
+          { path: "/home-page", element: <HomePage /> },
+          { path: "/about-us", element: <AboutPage /> },
+          { path: "/contact", element: <ContactPage /> },
+          {path: "/login", element: <LoginPage/>},
+          {path: "/register", element: <RegisterModalPage />}
+        ].map(({ path, element }) => (
+          <Route
+            key={path}
+            path={path}
+            element={<NoAuthLayout>{element}</NoAuthLayout>}
+          />
+        ))}
+
+        {/* --- Auth Pages --- */}
+        {/* <Route
+          path="/login"
+          element={
+            <PublicRoute isAuthenticated={isAuthenticated}>
+              <NoAuthLayout>
+                <LoginPage />
+              </NoAuthLayout>
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute isAuthenticated={isAuthenticated}>
+              <NoAuthLayout>
+                <RegisterModalPage />
+              </NoAuthLayout>
+            </PublicRoute>
+          }
+        /> */}
+
+        {/* --- Protected Routes --- */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <Home />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teams"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <Teams />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* --- Fallback --- */}
+        <Route
+          path="*"
+          element={
+            <NoAuthLayout>
+              <NotFound />
+            </NoAuthLayout>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default AppRoutes;

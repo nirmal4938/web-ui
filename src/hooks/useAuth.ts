@@ -1,46 +1,25 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthService } from "@/api/authService";
+// src/hooks/useAuth.ts
+import { useDispatch, useSelector } from "react-redux";
+import { login, logout } from "@/state/actions/authActions";
+import type { RootState } from "@/state/reducers/rootReducer";
+import type { AppDispatch } from "@/state/store/store";
 
-interface LoginValues {
-  email: string;
-  password: string;
-}
+export const useAuth = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, token, loading, error } = useSelector(
+    (state: RootState) => state.auth
+  );
 
-interface UseLoginHookResult {
-  loading: boolean;
-  error: string | null;
-  success: boolean;
-  login: (values: LoginValues) => Promise<void>;
-}
+  const isAuthenticated = !!token;
 
-export const useAuth = (): UseLoginHookResult => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
-
-  const login = async (values: LoginValues) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    try {
-      const res = await AuthService.login(values);
-
-      // ✅ Save token and user
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("user", JSON.stringify(res.user));
-
-      setSuccess(true);
-      navigate("/"); // redirect to home/dashboard
-    } catch (err: any) {
-      const message = err.response?.data?.message || "Invalid email or password.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
+  return {
+    user,
+    token,
+    loading,
+    error,
+    isAuthenticated,
+    login: (email: string, password: string) =>
+      dispatch<any>(login(email, password)),
+    logout: () => dispatch<any>(logout()),
   };
-
-  return { loading, error, success, login };
 };

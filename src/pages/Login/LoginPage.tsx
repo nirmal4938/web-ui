@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { resetAuth} from '@state/actions/authActions'
 import Modal from "@/components/layout/Modal/Modal";
 import LoginForm from "@/components/molecules/LoginForm/LoginForm";
 import ButtonPrimary from "@/components/atoms/ButtonPrimary/ButtonPrimary";
 import { SplitWrapper, BannerSection, ContentSection, BannerTextBlock, FooterLink } from "../Register/RegisterModalPage.styles";
 import { FaShoppingCart, FaWallet, FaGift } from "react-icons/fa";
 import Title from "@/components/atoms/Title/Title";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
   const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch<any>();
+  const formRef = useRef<any>(null);
+
+const handleClose = () => {
+  // ✅ Reset Formik form
+  formRef.current?.resetForm?.();
+
+  // ✅ Reset Redux auth state
+  dispatch(resetAuth());
+
+  // ✅ Close modal & navigate
+  setOpen(false);
+  navigate("/home-page");
+};
 
   const bannerContent = [
     {
@@ -33,7 +51,7 @@ const LoginPage: React.FC = () => {
         <ButtonPrimary onClick={() => setOpen(true)}>Open Login Popup</ButtonPrimary>
       </div>
 
-      <Modal isOpen={open} onClose={() => setOpen(false)} title="">
+      <Modal isOpen={open} onClose={handleClose} title="">
         <SplitWrapper>
           <BannerSection width="40%">
             {bannerContent.map((item, index) => (
@@ -49,7 +67,8 @@ const LoginPage: React.FC = () => {
 
           <ContentSection width="60%">
             <Title>Login to Your Account</Title>
-            <LoginForm />
+            {/* 👇 Pass form ref here */}
+            <LoginForm ref={formRef} />
             <FooterLink>
               Don’t have an account? <a href="/register">Register</a>
             </FooterLink>

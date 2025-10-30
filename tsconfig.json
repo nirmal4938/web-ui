@@ -28,7 +28,8 @@
       "@layouts/*": ["layouts/*"],
       "@context/*": ["context/*"],
       "@types/*": ["types/*"],
-      "@theme/*": ["theme/*"]
+      "@theme/*": ["theme/*"],
+       "@state/*": ["state/*"]
     },
 
     // 👇 This ensures styled-components theme augmentation is loaded globally

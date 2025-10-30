@@ -1,43 +1,36 @@
 import axiosInstance from "./axiosInstance";
-export interface OrgRegisterPayload {
-  name: string;
-  email: string;
-  phone: string;
-  password?: string;
-  logoUrl?: string;
-}
+
 export interface LoginPayload {
   email: string;
   password: string;
 }
 
-export interface RegisterPayload {
-  fullName: string;
-  email: string;
-  password: string;
-}
-
 export const AuthService = {
+  // 🔐 Login
   async login(payload: LoginPayload) {
-    const response = await axiosInstance.post("/auth/login", payload);
-    return response.data;
-  },
-
-  async register(payload: RegisterPayload) {
-    const response = await axiosInstance.post("/auth/register", payload);
-    return response.data;
-  },
-
-   async registerOrganization(payload: OrgRegisterPayload) {
-    const res = await axiosInstance.post("/organizations/register", payload);
-    return res.data; // should return organizationId or similar
-  },
-
-  async createPaymentOrder(amount: number, orgId: string) {
-    const res = await axiosInstance.post("/payments/create-order", {
-      amount,
-      organizationId: orgId,
+    const response = await axiosInstance.post("/auth/login", payload, {
+      withCredentials: true, // important if you’re using cookies/session
     });
-    return res.data;
+    return response.data;
+  },
+
+  // 🚪 Logout
+  async logout() {
+    const response = await axiosInstance.post(
+      "/auth/logout",
+      {},
+      {
+        withCredentials: true, // ensures cookies are cleared on the same domain
+      }
+    );
+    return response.data;
+  },
+
+  // ✅ Optional: check active session (for persistent login)
+  async checkSession() {
+    const response = await axiosInstance.get("/auth/session", {
+      withCredentials: true,
+    });
+    return response.data;
   },
 };
