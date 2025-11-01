@@ -11,7 +11,7 @@ export const sidebarConfig: NavItem[] = [
   {
     label: "Dashboard",
     icon: <FaChartBar />,
-    path: "/dashboard",
+    path: "/",
     permission: "dashboard:view",
   },
   {

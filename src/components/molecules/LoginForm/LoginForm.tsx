@@ -1,5 +1,5 @@
 // src/components/molecules/LoginForm/LoginForm.tsx
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ButtonPrimary from "@/components/atoms/ButtonPrimary/ButtonPrimary";
@@ -13,12 +13,47 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "@state/selectors/authSelectors";
+import { Eye, EyeOff } from "lucide-react";
+import styled from "styled-components";
+
+// ---------- Styled Enhancements ----------
+const PasswordWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const ToggleButton = styled.button`
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  &:hover {
+    color: #111;
+  }
+`;
+
+
+const ButtonContainer = styled.div`
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+`;
 
 const LoginForm = forwardRef((props, ref) => {
   const { loading, error, user, login } = useAuth();
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
+  const [showPassword, setShowPassword] = useState(false);
   const isDisabled = loading || isAuthenticated;
 
   return (
@@ -49,6 +84,7 @@ const LoginForm = forwardRef((props, ref) => {
 
         return (
           <Form>
+            {/* Email Field */}
             <InputWrapper>
               <Label>Email</Label>
               <Field
@@ -56,33 +92,53 @@ const LoginForm = forwardRef((props, ref) => {
                 name="email"
                 type="email"
                 disabled={isDisabled}
+                placeholder="Enter your email"
               />
               <ErrorMessage name="email" component={ErrorText} />
             </InputWrapper>
 
-            <InputWrapper>
-              <Label>Password</Label>
-              <Field
-                as={Input}
-                name="password"
-                type="password"
-                disabled={isDisabled}
-              />
-              <ErrorMessage name="password" component={ErrorText} />
-            </InputWrapper>
+            {/* Password Field with Toggle */}
+   <InputWrapper>
+  <Label>Password</Label>
+  <PasswordWrapper>
+    <Field
+      as={Input}
+      name="password"
+      type={showPassword ? "text" : "password"}
+      disabled={isDisabled}
+      placeholder="Enter your password"
+      style={{ width: "100%", paddingRight: "40px" }} // add right padding for icon
+    />
+    <ToggleButton
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      tabIndex={-1}
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </ToggleButton>
+  </PasswordWrapper>
+  <ErrorMessage name="password" component={ErrorText} />
+</InputWrapper>
 
+
+            {/* Error or Success Message */}
             {error && <ErrorText>{error}</ErrorText>}
             {user && (
-              <p style={{ color: "green" }}>Welcome, {user.fullName}</p>
+              <p style={{ color: "green", textAlign: "center" }}>
+                Welcome, {user.fullName}
+              </p>
             )}
 
-            <ButtonPrimary type="submit" disabled={isDisabled}>
-              {isAuthenticated
-                ? "Already Logged In"
-                : loading
-                ? "Logging in..."
-                : "Login"}
-            </ButtonPrimary>
+            {/* Submit Button Centered */}
+            <ButtonContainer>
+              <ButtonPrimary type="submit" disabled={isDisabled}>
+                {isAuthenticated
+                  ? "Already Logged In"
+                  : loading
+                  ? "Logging in..."
+                  : "Login"}
+              </ButtonPrimary>
+            </ButtonContainer>
           </Form>
         );
       }}

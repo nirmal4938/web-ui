@@ -4,12 +4,14 @@ import FeatureGrid from "@/components/organisms/FeatureGrid/FeatureGrid";
 import PaymentDemoSection from "@/components/organisms/PaymentDemoSection/PaymentDemoSection";
 import TestimonialsSection from "@/components/organisms/TestimonialsSection/TestimonialsSection";
 import FooterCTASection from "@/components/organisms/FooterCTASection/FooterCTASection";
+import IntegrationSection from "@/components/organisms/IntegrationSection/IntegrationSection";
 
 const HomePage: React.FC = () => {
   return (
     <>
       <HeroSection />
       <FeatureGrid />
+      <IntegrationSection/>
       <PaymentDemoSection />
       <TestimonialsSection />
       <FooterCTASection />

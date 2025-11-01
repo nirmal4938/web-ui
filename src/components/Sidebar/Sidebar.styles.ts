@@ -23,7 +23,7 @@ export const SidebarContainer = styled.aside<{ collapsed: boolean }>`
 export const SidebarWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100% - 84px);;
 `;
 
 export const SidebarHeader = styled.div`

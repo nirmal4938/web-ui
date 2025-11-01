@@ -14,14 +14,58 @@ import {
   FaChevronRight,
   FaChevronDown,
   FaChevronUp,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaUserCircle
 } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { sidebarConfig } from '@/config/SidebarConfig';
 import type { NavItem } from '@/types/navigation';
 import { usePermissions } from '@hooks/usePermissions';
-import { useAuth } from '@hooks/useAuth'; // ✅ Added hook for logout
+import { useAuth } from '@hooks/useAuth';
+import styled from 'styled-components';
+
+// ✅ New Styled Components
+const SidebarHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  min-height: 60px;
+`;
+
+const Avatar = styled.div<{ collapsed: boolean }>`
+  width: ${({ collapsed }) => (collapsed ? '40px' : '50px')};
+  height: ${({ collapsed }) => (collapsed ? '40px' : '50px')};
+  border-radius: 50%;
+  background-color: #2c3e50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: ${({ collapsed }) => (collapsed ? '1.3rem' : '1.5rem')};
+  color: #ecf0f1;
+  overflow: hidden;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+`;
+
+const UserName = styled.span`
+  font-size: 0.95rem;
+  font-weight: 600;
+`;
+
+const UserEmail = styled.span`
+  font-size: 0.8rem;
+  color: #bdc3c7;
+`;
+
+// ------------------------------------------
 
 type SidebarProps = {
   collapsed: boolean;
@@ -32,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
-  const { logout } = useAuth(); // ✅ use logout action
+  const { user, logout } = useAuth(); // ✅ Added user for avatar
   const [expandedItem, setExpandedItem] = React.useState<string | null>(null);
 
   const renderNavItems = () =>
@@ -89,9 +133,31 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   return (
     <SidebarContainer collapsed={collapsed}>
       {/* Collapse Button */}
-      <CollapseButton onClick={onToggle}>
+      {/* <CollapseButton onClick={onToggle}>
         {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
-      </CollapseButton>
+      </CollapseButton> */}
+
+      {/* ✅ Sidebar Header with Avatar */}
+      <SidebarHeader>
+        <Avatar collapsed={collapsed}>
+          {user?.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt="avatar"
+              style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+            />
+          ) : (
+            <FaUserCircle />
+          )}
+        </Avatar>
+
+        {!collapsed && (
+          <UserInfo>
+            <UserName>{user?.fullName || 'Guest User'}</UserName>
+            <UserEmail>{user?.email || 'Not logged in'}</UserEmail>
+          </UserInfo>
+        )}
+      </SidebarHeader>
 
       {/* Sidebar Navigation */}
       <SidebarWrapper>
@@ -100,23 +166,23 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
       {/* ✅ Logout Button Fixed at Bottom */}
       <div
-  style={{
-    position: 'absolute',
-    bottom: '1rem',
-    width: '100%',
-  }}
->
-  <NavItemButton
-    active={false} // ✅ REQUIRED because styled component expects it
-    onClick={() => logout()}
-    style={{
-      justifyContent: collapsed ? 'center' : 'flex-start',
-      color: '#e74c3c',
-    }}
-  >
-    <FaSignOutAlt />
-    {!collapsed && <NavLabel>Logout</NavLabel>}
-  </NavItemButton>
+        style={{
+          position: 'absolute',
+          bottom: '1rem',
+          width: '100%',
+        }}
+      >
+        <NavItemButton
+          active={false}
+          onClick={() => logout()}
+          style={{
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            color: '#e74c3c',
+          }}
+        >
+          <FaSignOutAlt />
+          {!collapsed && <NavLabel>Logout</NavLabel>}
+        </NavItemButton>
       </div>
     </SidebarContainer>
   );

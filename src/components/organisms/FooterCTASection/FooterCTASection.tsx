@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import ButtonPrimary from "@/components/atoms/ButtonPrimary/ButtonPrimary";
 import Title from "@/components/atoms/Title/Title";
+import { useNavigate } from "react-router-dom";
 
 const FooterWrapper = styled.footer`
   background: ${({ theme }) => theme.CTA_COLOR};
@@ -29,6 +30,7 @@ const FooterBottom = styled.div`
 `;
 
 const FooterCTASection: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <FooterWrapper>
       <Title level="h2">Ready to Build Something Great?</Title>
@@ -44,6 +46,7 @@ const FooterCTASection: React.FC = () => {
           padding: "12px 24px",
           fontSize: "1rem",
         }}
+        onClick={() => navigate("/contact")}
       >
         Get in Touch
       </ButtonPrimary>

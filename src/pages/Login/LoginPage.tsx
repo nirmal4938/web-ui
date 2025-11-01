@@ -46,13 +46,38 @@ const handleClose = () => {
   ];
 
   return (
-    <>
-      <div style={{ textAlign: "center", marginTop: "80px" }}>
-        <ButtonPrimary onClick={() => setOpen(true)}>Open Login Popup</ButtonPrimary>
-      </div>
+    // <>
+    //   <div style={{ textAlign: "center", marginTop: "80px" }}>
+    //     <ButtonPrimary onClick={() => setOpen(true)}>Open Login Popup</ButtonPrimary>
+    //   </div>
 
-      <Modal isOpen={open} onClose={handleClose} title="">
-        <SplitWrapper>
+    //   <Modal isOpen={open} onClose={handleClose} title="">
+    //     <SplitWrapper>
+    //       <BannerSection width="40%">
+    //         {bannerContent.map((item, index) => (
+    //           <BannerTextBlock key={index}>
+    //             <div className="icon">{item.icon}</div>
+    //             <div>
+    //               <h4>{item.title}</h4>
+    //               <p>{item.desc}</p>
+    //             </div>
+    //           </BannerTextBlock>
+    //         ))}
+    //       </BannerSection>
+
+    //       <ContentSection width="60%">
+    //         <Title>Login to Your Account</Title>
+    //         {/* 👇 Pass form ref here */}
+    //         <LoginForm ref={formRef} />
+    //         <FooterLink>
+    //           Don’t have an account? <a href="/register">Register</a>
+    //         </FooterLink>
+    //       </ContentSection>
+    //     </SplitWrapper>
+    //   </Modal>
+    // </>
+    <React.Fragment>
+<SplitWrapper>
           <BannerSection width="40%">
             {bannerContent.map((item, index) => (
               <BannerTextBlock key={index}>
@@ -73,9 +98,8 @@ const handleClose = () => {
               Don’t have an account? <a href="/register">Register</a>
             </FooterLink>
           </ContentSection>
-        </SplitWrapper>
-      </Modal>
-    </>
+        </SplitWrapper> 
+    </React.Fragment>
   );
 };
 
