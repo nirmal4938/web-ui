@@ -1,6 +1,6 @@
 // src/hooks/useAuth.ts
 import { useDispatch, useSelector } from "react-redux";
-import { login, logout } from "@/state/actions/authActions";
+import { login, loginWithGoogle, logout } from "@/state/actions/authActions";
 import type { RootState } from "@/state/reducers/rootReducer";
 import type { AppDispatch } from "@/state/store/store";
 
@@ -21,5 +21,6 @@ export const useAuth = () => {
     login: (email: string, password: string) =>
       dispatch<any>(login(email, password)),
     logout: () => dispatch<any>(logout()),
+    loginWithGoogle: () => dispatch<any>(loginWithGoogle()),
   };
 };

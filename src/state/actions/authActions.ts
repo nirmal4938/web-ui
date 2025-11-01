@@ -53,3 +53,16 @@ export const logout =
 export const resetAuth = (): AuthActionTypes => ({
   type: RESET_AUTH_STATE,
 });
+
+
+export const loginWithGoogle =
+  () => async (dispatch: Dispatch): Promise<void> => {
+    dispatch({ type: LOGIN_REQUEST });
+    try {
+      await AuthService.loginWithGoogle();
+    } catch (error: any) {
+      const message =
+        error.response?.data?.message || "Google login initialization failed.";
+      dispatch({ type: LOGIN_FAILURE, payload: message });
+    }
+  };

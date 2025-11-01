@@ -21,6 +21,7 @@ const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_PROD_URL || "http://localhost:5000/api",
   headers: { "Content-Type": "application/json" },
   withCredentials: true, // needed for refresh cookies
+  
 });
 
 // ✅ Add access token to every request

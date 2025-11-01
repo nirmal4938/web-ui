@@ -27,6 +27,7 @@ import PublicRoute from "./ProtectedRoute";
 
 // Redux selector
 import { selectIsAuthenticated } from "@state/selectors/authSelectors";
+import AuthSuccessPage from "@/pages/Login/AuthSuccessPage";
 
 const AppRoutes: React.FC = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -52,7 +53,14 @@ const AppRoutes: React.FC = () => {
             element={<NoAuthLayout>{element}</NoAuthLayout>}
           />
         ))}
-
+<Route
+  path="/auth/success"
+  element={
+    <NoAuthLayout>
+      <AuthSuccessPage />
+    </NoAuthLayout>
+  }
+/>
         {/* --- Auth Pages --- */}
         {/* <Route
           path="/login"
@@ -86,6 +94,7 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
+        
         <Route
           path="/teams"
           element={
