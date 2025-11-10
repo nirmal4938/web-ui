@@ -35,7 +35,7 @@ const Content = styled.section`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 2rem clamp(1rem, 2vw, 2rem);
+  // padding: 2rem clamp(1rem, 2vw, 2rem);
   scrollbar-width: thin;
   scroll-behavior: smooth;
 
@@ -53,11 +53,11 @@ const Content = styled.section`
   }
 
   @media (max-width: 1024px) {
-    padding: 1.5rem;
+    padding: .5rem;
   }
 
   @media (max-width: 768px) {
-    padding: 1rem;
+    padding: 0rem;
   }
 `;
 

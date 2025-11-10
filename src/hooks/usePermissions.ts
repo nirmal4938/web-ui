@@ -9,7 +9,17 @@ export const usePermissions = () => {
     "practice:quizzes",
     "practice:assignments",
     "practice:mocktests",
-    "questions:view",
+    
+    // 🧩 Question Bank
+    "questions:view",               // access to all questions
+    "questions:topics:view",        // access filtered by topic
+    "questions:difficulty:view",    // access filtered by difficulty
+    "questions:add",                // for admin: add question
+    "questions:edit",               // edit existing question
+    "questions:delete",             // delete question
+    "questions:quiz:generate",      // generate quiz
+    "questions:analytics:view",     // view analytics for questions
+
     "students:view",
     "students:progress",
     "students:certificates",
@@ -17,6 +27,7 @@ export const usePermissions = () => {
     "admin:users",
     "admin:roles",
     "admin:permissions",
+    
     "cricket:view",
     "cricket:players",
     "cricket:tournaments",

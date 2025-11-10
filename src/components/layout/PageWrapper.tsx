@@ -6,7 +6,7 @@ const PageWrapper = styled.div`
   width: 100%;
   min-height: 100vh;
   background: #f9fafc;
-  padding: 24px 32px;
+  padding: 24px 20px;
   box-sizing: border-box;
 
   @media (max-width: 768px) {

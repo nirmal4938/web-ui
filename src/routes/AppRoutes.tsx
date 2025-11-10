@@ -47,6 +47,7 @@ import AuthSuccessPage from "@/pages/Login/AuthSuccessPage";
 import Footer from "@/components/layout/Footer";
 import { Download } from "lucide-react";
 import Button from "@/components/atoms/Button/Button";
+import QuestionListPage from "@/pages/Questions/QuestionListPage";
 
 const AppRoutes: React.FC = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -218,6 +219,41 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
+
+
+        <Route
+  path="/questions"
+  element={
+    <ProtectedRoute isAuthenticated={isAuthenticated}>
+      <MainLayout>
+        <QuestionListPage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
+
+{/* <Route
+  path="/questions/topics"
+  element={
+    <ProtectedRoute isAuthenticated={isAuthenticated}>
+      <MainLayout>
+        <QuestionTopicsPage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/> */}
+
+{/* <Route
+  path="/questions/difficulty"
+  element={
+    <ProtectedRoute isAuthenticated={isAuthenticated}>
+      <MainLayout>
+        <QuestionDifficultyPage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/> */}
+
 
         {/* --- Fallback --- */}
         <Route
