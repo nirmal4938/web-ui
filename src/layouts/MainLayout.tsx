@@ -6,19 +6,26 @@ import { ContentWrapper } from "./ContentWrapper";
 import { useLocation } from "react-router-dom";
 import { SIDEBAR_WIDTH, sidebarConfig } from "@/config/SidebarConfig";
 
+/* ─────────────────────────────
+   Layout Wrapper
+────────────────────────────── */
 const LayoutWrapper = styled.div`
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   background: ${({ theme }) => theme.BACKGROUND};
-  overflow: hidden;
 `;
 
+/* ─────────────────────────────
+   Main Section (Flex Column)
+────────────────────────────── */
 const MainSection = styled.main<{ collapsed: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 100vh; /* ✅ Ensures footer sits at bottom */
   transition: margin-left 0.3s ease, width 0.3s ease;
+
   margin-left: ${({ collapsed }) =>
     collapsed ? `${SIDEBAR_WIDTH.collapsed}px` : `${SIDEBAR_WIDTH.expanded}px`};
   width: calc(
@@ -33,13 +40,19 @@ const MainSection = styled.main<{ collapsed: boolean }>`
   }
 `;
 
+/* ─────────────────────────────
+   Content Wrapper
+────────────────────────────── */
 const StyledContentWrapper = styled(ContentWrapper)`
-  flex: 1;
+  flex: 1; /* ✅ Grows and pushes footer to bottom */
   overflow-y: auto;
   background: ${({ theme }) => theme.CONTENT_BG};
   transition: all 0.3s ease;
 `;
 
+/* ─────────────────────────────
+   Helper: Breadcrumbs & Title
+────────────────────────────── */
 const findPageInfo = (path: string) => {
   for (const item of sidebarConfig) {
     if (item.path === path) return { title: item.label, breadcrumbs: [item.label] };
@@ -53,7 +66,13 @@ const findPageInfo = (path: string) => {
   return { title: "Dashboard", breadcrumbs: ["Home", "Dashboard"] };
 };
 
-const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+/* ─────────────────────────────
+   Layout Component
+────────────────────────────── */
+const MainLayout: React.FC<{
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}> = ({ children, footer }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -76,7 +95,12 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           breadcrumbs={breadcrumbs}
           scrolled={scrolled}
         />
+
+        {/* Main Page Content */}
         <StyledContentWrapper collapsed={collapsed}>{children}</StyledContentWrapper>
+
+        {/* ✅ Footer always at bottom (if passed) */}
+        {footer && footer}
       </MainSection>
     </LayoutWrapper>
   );

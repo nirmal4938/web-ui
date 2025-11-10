@@ -20,7 +20,7 @@ export const HeaderContainer = styled(motion.header)<{ collapsed?: boolean; scro
   box-shadow: ${({ scrolled, theme }) => (scrolled ? theme.HEADER_SHADOW : "none")};
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   
-  padding: 0 1.75rem;
+  padding: 6px 1.75rem;
 
   @media (max-width: 992px) {
     margin-left: 0;

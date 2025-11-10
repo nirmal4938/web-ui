@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
+/* ---------------------- Layout Wrapper ---------------------- */
 interface NoAuthLayoutProps {
   children: React.ReactNode;
 }
@@ -13,6 +14,7 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.BACKGROUND || "#fff"};
 `;
 
+/* ---------------------- Header ---------------------- */
 const Header = styled.header`
   position: sticky;
   top: 0;
@@ -39,7 +41,8 @@ const Logo = styled(Link)`
   letter-spacing: 0.5px;
 `;
 
-const Nav = styled.nav`
+/* ---------------------- Nav ---------------------- */
+const Nav = styled.nav<{ open?: boolean }>`
   display: flex;
   align-items: center;
   gap: 24px;
@@ -49,15 +52,31 @@ const Nav = styled.nav`
     color: ${({ theme }) => theme.TEXT || "#333"};
     text-decoration: none;
     transition: color 0.2s ease;
+
     &:hover {
       color: ${({ theme }) => theme.CTA_COLOR_LIGHT || "#0a2540"};
     }
   }
 
   @media (max-width: 768px) {
-    gap: 12px;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.97);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out;
+    max-height: ${({ open }) => (open ? "300px" : "0")};
+    overflow: hidden;
+    opacity: ${({ open }) => (open ? 1 : 0)};
   }
 `;
+
+/* ---------------------- CTA Button ---------------------- */
 export const CTAButton = styled(Link)`
   position: relative;
   display: inline-flex;
@@ -68,8 +87,7 @@ export const CTAButton = styled(Link)`
     ${({ theme }) => theme.CTA_COLOR} 0%,
     ${({ theme }) => theme.CTA_COLOR_HOVER} 100%
   );
-  color: ${({ theme }) => theme.WHITE};
-  font-family: ${({ theme }) => theme.fontFamily};
+  color: #ffffff !important;
   font-weight: 600;
   font-size: ${({ theme }) => theme.font.size.body};
   padding: ${({ theme }) => `${theme.spacing(1.25)} ${theme.spacing(3)}`};
@@ -78,59 +96,33 @@ export const CTAButton = styled(Link)`
   box-shadow: 0 4px 12px rgba(31, 97, 135, 0.25);
   transition: all 0.25s ease-in-out;
   cursor: pointer;
-  letter-spacing: 0.3px;
-  overflow: hidden;
-  z-index: 0;
-  user-select: none;
-
-  /* ✅ Keep text crisp white always */
-  color: #ffffff !important;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
 
   &:hover {
-    background: linear-gradient(
-      135deg,
-      ${({ theme }) => theme.CTA_COLOR_HOVER} 0%,
-      ${({ theme }) => theme.CTA_COLOR} 100%
-    );
     transform: translateY(-2px) scale(1.02);
     box-shadow: 0 6px 18px rgba(31, 97, 135, 0.35);
-    color: #ffffff !important; /* ✅ reinforce readability */
   }
 
   &:active {
     transform: translateY(0) scale(0.98);
     box-shadow: 0 3px 8px rgba(31, 97, 135, 0.2);
-    color: #ffffff !important;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.CTA_COLOR_LIGHT};
-    outline-offset: 3px;
-    color: #ffffff !important;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -75%;
-    width: 50%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.15);
-    transform: skewX(-25deg);
-    transition: all 0.4s ease;
-    z-index: 1;
-  }
-
-  &:hover::after {
-    left: 130%;
   }
 `;
 
+/* ---------------------- Hamburger Menu ---------------------- */
+const MenuButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
 
+  @media (max-width: 768px) {
+    display: block;
+    color: ${({ theme }) => theme.TEXT || "#333"};
+  }
+`;
 
-
+/* ---------------------- Content ---------------------- */
 const Content = styled.main`
   flex: 1;
   display: flex;
@@ -142,6 +134,7 @@ const Content = styled.main`
   box-sizing: border-box;
 `;
 
+/* ---------------------- Footer ---------------------- */
 const Footer = styled.footer`
   background: #0a2540;
   color: #ffffff;
@@ -175,11 +168,11 @@ const Footer = styled.footer`
     text-decoration: none;
     margin: 6px 0;
     transition: all 0.2s ease;
-  }
 
-  a:hover {
-    color: #ffffff;
-    text-decoration: underline;
+    &:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
   }
 
   .footer-bottom {
@@ -188,85 +181,69 @@ const Footer = styled.footer`
     font-size: 0.85rem;
     color: #b0c4de;
   }
-
-  @media (max-width: 768px) {
-    text-align: center;
-  }
 `;
 
-
+/* ---------------------- Component ---------------------- */
 const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <Wrapper>
       <Header>
         <Logo to="/home-page">Synqware</Logo>
-        <Nav>
-          <Link to="/about-us">AboutUs</Link>
-          <Link to="/contact">Contact</Link>
-          <CTAButton to="/login">Login / Sign Up</CTAButton>
+
+        <MenuButton onClick={() => setMenuOpen((o) => !o)}>
+          {menuOpen ? "✕" : "☰"}
+        </MenuButton>
+
+        <Nav open={menuOpen}>
+          <Link to="/about-us" onClick={() => setMenuOpen(false)}>
+            AboutUs
+          </Link>
+          <Link to="/contact" onClick={() => setMenuOpen(false)}>
+            Contact
+          </Link>
+          <CTAButton to="/login" onClick={() => setMenuOpen(false)}>
+            Login / Sign Up
+          </CTAButton>
         </Nav>
       </Header>
 
       <Content>{children}</Content>
 
-    <Footer>
-  <div className="footer-grid">
-    {/* Column 1: Company */}
-    <div>
-      <h4>Synqware Technologies</h4>
-      <p className="text-sm text-gray-300">
-        Building secure and scalable SaaS solutions for teams, enterprises, and innovators.  
-        Empowering digital workflows with simplicity and trust.
-      </p>
-    </div>
+      <Footer>
+        <div className="footer-grid">
+          <div>
+            <h4>Synqware Technologies</h4>
+            <p>
+              Building secure and scalable SaaS solutions for teams and
+              enterprises. Empowering digital workflows with simplicity and
+              trust.
+            </p>
+          </div>
 
-    {/* Column 2: Quick Links */}
-    <div>
-      <h4>Quick Links</h4>
-      <Link to="/home-page">Home</Link>
-      <Link to="/about-us">About Us</Link>
-      <Link to="/contact">Contact</Link>
-      <Link to="/login">Login / Register</Link>
-    </div>
+          <div>
+            <h4>Quick Links</h4>
+            <Link to="/home-page">Home</Link>
+            <Link to="/about-us">About Us</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/login">Login / Register</Link>
+          </div>
 
-    {/* Column 3: Legal */}
-    <div>
-      <h4>Legal</h4>
-      <Link to="/terms">Terms & Conditions</Link>
-      <Link to="/privacy">Privacy Policy</Link>
-      <Link to="/refund-policy">Refund & Cancellation</Link>
-      <Link to="/shipping-policy">Shipping Policy</Link>
-    </div>
+          <div>
+            <h4>Legal</h4>
+            <Link to="/terms">Terms & Conditions</Link>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/refund-policy">Refund & Cancellation</Link>
+            <Link to="/shipping-policy">Shipping Policy</Link>
+          </div>
+        </div>
 
-    {/* Column 4: Connect */}
-    {/* <div>
-      <h4>Connect</h4>
-      <a href="mailto:support@synqware.in">support@synqware.in</a>
-      <a
-        href="https://linkedin.com/company/synqware"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        LinkedIn
-      </a>
-      <a
-        href="https://twitter.com/synqware"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Twitter / X
-      </a>
-    </div> */}
-  </div>
-
-  <div className="footer-bottom">
-    © {new Date().getFullYear()} 
-    {/* Synqware Technologies Pvt. Ltd. | All rights reserved.   */}
-    <br />
-    {/* Built with ❤️ for the SaaS ecosystem. */}
-  </div>
-</Footer>
-
+        <div className="footer-bottom">
+          © {new Date().getFullYear()} Synqware Technologies Pvt. Ltd. | All
+          rights reserved.
+        </div>
+      </Footer>
     </Wrapper>
   );
 };

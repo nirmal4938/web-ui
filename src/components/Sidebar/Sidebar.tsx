@@ -29,7 +29,7 @@ import styled from 'styled-components';
 const SidebarHeader = styled.div`
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 6px;
   gap: 0.75rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;

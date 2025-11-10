@@ -51,6 +51,7 @@ export const defaultTheme: DefaultTheme = {
   HEADER_BG: "#FFFFFF",
   HEADER_BORDER: "#E5E7EB",
   HEADER_SHADOW: "0 2px 6px rgba(0,0,0,0.05)",
+  TEXT_PRIMARY: "#111827",
 
   // 🧩 Font sizes
   font: {

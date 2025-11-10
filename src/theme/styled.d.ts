@@ -49,6 +49,7 @@ declare module "styled-components" {
     CTA_ERROR: string;
     CTA_SUCCESS: string;
     CTA_GREEN: string;
+    TEXT_PRIMARY: string;
 
     // Neutral shades
     BLACK: string;

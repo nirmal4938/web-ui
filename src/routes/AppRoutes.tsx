@@ -27,7 +27,26 @@ import PublicRoute from "./ProtectedRoute";
 
 // Redux selector
 import { selectIsAuthenticated } from "@state/selectors/authSelectors";
+
+// Cricket Pages
+import PlayersPage from "@/pages/cricket/PlayersPage";
+import SearchPlayersPage from "@/pages/cricket/SearchPlayersPage";
+import TournamentsPage from "@/pages/cricket/TournamentsPage";
+
+// Election Pages (you’ll create these soon)
+// import ElectionDashboardPage from "@/pages/election/ElectionDashboardPage";
+import ElectionDashboardPage from "@/pages/election/ElectionDashboardPage";
+import CandidateListPage from '@/pages/election/CandidateListPage';
+import VoterListPage from '@pages/election/VoterListingPage';
+import VotingBoothPage from "@/pages/election/VotingBoothPage";
+import ResultDashboardPage from "@/pages/election/ResultDashboardPage";
+import ElectionAdminPage from "@/pages/election/ResultDashboardPage";
+
+// Others
 import AuthSuccessPage from "@/pages/Login/AuthSuccessPage";
+import Footer from "@/components/layout/Footer";
+import { Download } from "lucide-react";
+import Button from "@/components/atoms/Button/Button";
 
 const AppRoutes: React.FC = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -35,7 +54,8 @@ const AppRoutes: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* --- Public Info Pages --- */}
+
+        {/* --- Public Pages --- */}
         {[
           { path: "/terms", element: <TermsPage /> },
           { path: "/privacy", element: <PrivacyPage /> },
@@ -44,8 +64,8 @@ const AppRoutes: React.FC = () => {
           { path: "/home-page", element: <HomePage /> },
           { path: "/about-us", element: <AboutPage /> },
           { path: "/contact", element: <ContactPage /> },
-          {path: "/login", element: <LoginPage/>},
-          {path: "/register", element: <RegisterModalPage />}
+          { path: "/login", element: <LoginPage /> },
+          { path: "/register", element: <RegisterModalPage /> },
         ].map(({ path, element }) => (
           <Route
             key={path}
@@ -53,35 +73,15 @@ const AppRoutes: React.FC = () => {
             element={<NoAuthLayout>{element}</NoAuthLayout>}
           />
         ))}
-<Route
-  path="/auth/success"
-  element={
-    <NoAuthLayout>
-      <AuthSuccessPage />
-    </NoAuthLayout>
-  }
-/>
-        {/* --- Auth Pages --- */}
-        {/* <Route
-          path="/login"
+
+        <Route
+          path="/auth/success"
           element={
-            <PublicRoute isAuthenticated={isAuthenticated}>
-              <NoAuthLayout>
-                <LoginPage />
-              </NoAuthLayout>
-            </PublicRoute>
+            <NoAuthLayout>
+              <AuthSuccessPage />
+            </NoAuthLayout>
           }
         />
-        <Route
-          path="/register"
-          element={
-            <PublicRoute isAuthenticated={isAuthenticated}>
-              <NoAuthLayout>
-                <RegisterModalPage />
-              </NoAuthLayout>
-            </PublicRoute>
-          }
-        /> */}
 
         {/* --- Protected Routes --- */}
         <Route
@@ -94,7 +94,7 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        
+
         <Route
           path="/teams"
           element={
@@ -106,13 +106,132 @@ const AppRoutes: React.FC = () => {
           }
         />
 
+        {/* 🏏 Cricket Routes */}
+        <Route
+          path="/cricket/players"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout
+                footer={
+                  <Footer
+                    leftContent={<div>Showing 24 Players</div>}
+                    centerContent={<div>© 2025 Cricket CRM Portal</div>}
+                    rightContent={
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                          Add Player
+                        </Button>
+                        <Button variant="ghost" size="sm" icon={<Download size={14} />}>
+                          Export CSV
+                        </Button>
+                      </div>
+                    }
+                  />
+                }
+              >
+                <PlayersPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/cricket/players/search"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <SearchPlayersPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/cricket/tournaments"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <TournamentsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 🗳️ Election Routes */}
+        <Route
+          path="/election"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <ElectionDashboardPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/election/candidates"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <CandidateListPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/election/voters"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <VoterListPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/election/voting"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <VotingBoothPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/election/results"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <ResultDashboardPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/election/admin"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <MainLayout>
+                <ElectionAdminPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
         {/* --- Fallback --- */}
         <Route
           path="*"
           element={
-            <NoAuthLayout>
-              <NotFound />
-            </NoAuthLayout>
+            isAuthenticated ? (
+              <MainLayout>
+                <NotFound />
+              </MainLayout>
+            ) : (
+              <NoAuthLayout>
+                <NotFound />
+              </NoAuthLayout>
+            )
           }
         />
       </Routes>

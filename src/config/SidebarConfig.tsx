@@ -1,5 +1,16 @@
-import { FaBook, FaLayerGroup, FaClipboardList, FaChartBar, FaUserGraduate, FaCogs, FaQuestionCircle } from "react-icons/fa";
-// import { FaBook, FaLayerGroup, FaClipboardList, FaChartBar, FaUserGraduate, FaCogs, FaQuestionCircle } from "react-icons/fa";
+import { 
+  FaBook, 
+  FaLayerGroup, 
+  FaClipboardList, 
+  FaChartBar, 
+  FaUserGraduate, 
+  FaCogs, 
+  FaQuestionCircle,
+  FaTrophy,
+  FaUserAlt, 
+  FaVoteYea
+} from "react-icons/fa";
+
 import type { NavItem } from "@/types/navigation";
 import React from "react";
 
@@ -7,6 +18,7 @@ export const SIDEBAR_WIDTH = {
   collapsed: "72",
   expanded: "240",
 };
+
 export const sidebarConfig: NavItem[] = [
   {
     label: "Dashboard",
@@ -16,7 +28,7 @@ export const sidebarConfig: NavItem[] = [
   },
   {
     label: "Courses",
-    icon:  <FaBook />,
+    icon: <FaBook />,
     permission: "courses:view",
     children: [
       { label: "All Courses", path: "/courses", permission: "courses:view" },
@@ -65,6 +77,32 @@ export const sidebarConfig: NavItem[] = [
       { label: "Certificates", path: "/students/certificates", permission: "students:certificates" },
     ],
   },
+
+  // 🏏 New Cricket Section
+  {
+    label: "Cricket",
+    icon: <FaTrophy />,
+    permission: "cricket:view",
+    children: [
+      { label: "Players", path: "/cricket/players", permission: "cricket:players" },
+      { label: "Search Players", path: "/cricket/players/search", permission: "cricket:players" },
+      { label: "Tournaments", path: "/cricket/tournaments", permission: "cricket:tournaments" },
+    ],
+  },
+  {
+    label: "Election",
+    icon: <FaVoteYea />,
+    permission: "election:view",
+    children: [
+      { label: "Dashboard", path: "/election", permission: "election:view" },
+      { label: "Candidates", path: "/election/candidates", permission: "election:candidates" },
+      { label: "Voters", path: "/election/voters", permission: "election:voters" },
+      { label: "Voting Booth", path: "/election/voting", permission: "election:voting" },
+      { label: "Results", path: "/election/results", permission: "election:results" },
+      { label: "Admin Controls", path: "/election/admin", permission: "election:admin" },
+    ],
+  },
+
   {
     label: "Administration",
     icon: <FaCogs />,

@@ -1,3 +1,4 @@
+// src/hooks/usePermissions.ts
 export const usePermissions = () => {
   const userPermissions: string[] = [
     "dashboard:view",
@@ -15,7 +16,18 @@ export const usePermissions = () => {
     "admin:panel",
     "admin:users",
     "admin:roles",
-    "admin:permissions"
+    "admin:permissions",
+    "cricket:view",
+    "cricket:players",
+    "cricket:tournaments",
+
+    // 🗳️ Election Permissions
+    "election:view",
+    "election:candidates",
+    "election:voters",
+    "election:voting",
+    "election:results",
+    "election:admin",
   ];
 
   const hasPermission = (key?: string) => !key || userPermissions.includes(key);

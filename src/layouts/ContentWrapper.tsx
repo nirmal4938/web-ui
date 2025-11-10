@@ -6,6 +6,10 @@ const SIDEBAR_WIDTH = {
   expanded: "240px",
 };
 
+
+  // margin-left: ${({ collapsed }) =>
+  //   collapsed ? SIDEBAR_WIDTH.collapsed : SIDEBAR_WIDTH.expanded};
+
 const Wrapper = styled.div<{ collapsed: boolean }>`
   display: flex;
   flex-direction: column;
@@ -14,8 +18,6 @@ const Wrapper = styled.div<{ collapsed: boolean }>`
   background: ${({ theme }) => theme.CONTENT_BG};
   color: ${({ theme }) => theme.TEXT};
   transition: margin-left 0.3s ease, background 0.3s ease;
-  margin-left: ${({ collapsed }) =>
-    collapsed ? SIDEBAR_WIDTH.collapsed : SIDEBAR_WIDTH.expanded};
 
   @media (max-width: 992px) {
     margin-left: 0;

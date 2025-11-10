@@ -4,6 +4,8 @@ import { StyledButton } from "./Button.styles";
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "outline" | "ghost";
+  size?: "sm" | "md" | "lg";
+  fullWidth?: boolean;
   isLoading?: boolean;
   icon?: React.ReactNode;
   children: React.ReactNode;
@@ -11,6 +13,8 @@ export interface ButtonProps
 
 const Button: React.FC<ButtonProps> = ({
   variant = "primary",
+  size = "md",
+  fullWidth = false,
   isLoading = false,
   icon,
   children,
@@ -20,6 +24,8 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <StyledButton
       variant={variant}
+      size={size}
+      fullWidth={fullWidth}
       disabled={disabled || isLoading}
       {...rest}
     >
@@ -27,8 +33,8 @@ const Button: React.FC<ButtonProps> = ({
         <span>Loading...</span>
       ) : (
         <>
-          {icon && <span>{icon}</span>}
-          {children}
+          {icon && <span className="btn-icon">{icon}</span>}
+          <span>{children}</span>
         </>
       )}
     </StyledButton>
