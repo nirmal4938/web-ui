@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import styled, { keyframes } from "styled-components";
 import axios from "axios";
+import { defaultTheme } from "@theme/theme";
 
 /* -------------------- Animations -------------------- */
 const fadeIn = keyframes`
@@ -22,13 +23,13 @@ const Overlay = styled.div`
 `;
 
 const Modal = styled.div`
-  background: #fff;
+  background: ${({ theme }) => theme.SURFACE};
   padding: 2rem;
-  border-radius: 12px;
+  border-radius: ${({ theme }) => theme.radius.lg};
   width: 500px;
   max-width: 95%;
   animation: ${fadeIn} 0.3s ease-out;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: ${({ theme }) => theme.CONTENT_SHADOW};
 `;
 
 const Grid = styled.div`
@@ -53,29 +54,29 @@ const Label = styled.label`
   font-weight: 500;
   margin-bottom: 0.25rem;
   display: block;
+  font-family: ${({ theme }) => theme.fontFamily};
 `;
 
 const Input = styled(Field)`
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  margin-bottom: 0.25rem;
-  font-size: 0.875rem;
+  border: 1px solid ${({ theme }) => theme.BORDER};
+  border-radius: ${({ theme }) => theme.radius.md};
+  font-size: ${({ theme }) => theme.font.size.body};
 `;
 
 const TextArea = styled(Field)`
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  border: 1px solid ${({ theme }) => theme.BORDER};
+  border-radius: ${({ theme }) => theme.radius.md};
+  font-size: ${({ theme }) => theme.font.size.body};
   resize: vertical;
 `;
 
 const ErrorText = styled.div`
-  color: red;
-  font-size: 0.75rem;
+  color: ${({ theme }) => theme.ERROR_COLOR};
+  font-size: ${({ theme }) => theme.font.size.small};
   margin-bottom: 0.5rem;
 `;
 
@@ -86,25 +87,29 @@ const ButtonGroup = styled.div`
   margin-top: 1.5rem;
 `;
 
-const Button = styled.button<{ variant?: "primary" | "outline" }>`
+const SubmitButton = styled.button<{ variant?: "primary" | "outline" }>`
   padding: 0.6rem 1rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
+  border-radius: ${({ theme }) => theme.radius.md};
   font-weight: 500;
-  font-size: 0.875rem;
-  ${({ variant }) =>
+  font-size: ${({ theme }) => theme.font.size.label};
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  ${({ variant, theme }) =>
     variant === "primary"
       ? `
-    background: #2563eb;
-    color: #fff;
-    &:hover { background: #1d4ed8; }
+      background: ${theme.CTA_COLOR};
+      color: ${theme.WHITE};
+      &:hover { background: ${theme.CTA_COLOR_HOVER}; }
   `
       : `
-    background: #fff;
-    border: 1px solid #d1d5db;
-    color: #111;
-    &:hover { background: #f3f4f6; }
+      background: ${theme.WHITE};
+      border: 1px solid ${theme.BORDER};
+      color: ${theme.TEXT};
+      &:hover { background: ${theme.HOVER_BG}; }
   `}
 `;
 
@@ -112,9 +117,9 @@ const PartySymbolPreview = styled.img`
   max-width: 60px;
   max-height: 60px;
   margin-top: 0.25rem;
-  border-radius: 6px;
+  border-radius: ${({ theme }) => theme.radius.md};
   object-fit: contain;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.BORDER};
 `;
 
 /* -------------------- Validation -------------------- */
@@ -158,11 +163,7 @@ const AddCandidateModal: React.FC<{ onClose: () => void; onSuccess: () => void }
     <Overlay>
       <Modal>
         <h2>Add Candidate</h2>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={candidateSchema}
-          onSubmit={handleSubmit}
-        >
+        <Formik initialValues={initialValues} validationSchema={candidateSchema} onSubmit={handleSubmit}>
           {({ values, setFieldValue }) => (
             <Form>
               <Grid>
@@ -219,12 +220,12 @@ const AddCandidateModal: React.FC<{ onClose: () => void; onSuccess: () => void }
               </Grid>
 
               <ButtonGroup>
-                <Button variant="outline" type="button" onClick={onClose}>
+                <SubmitButton variant="outline" type="button" onClick={onClose}>
                   Cancel
-                </Button>
-                <Button variant="primary" type="submit">
+                </SubmitButton>
+                <SubmitButton variant="primary" type="submit">
                   Add Candidate
-                </Button>
+                </SubmitButton>
               </ButtonGroup>
             </Form>
           )}

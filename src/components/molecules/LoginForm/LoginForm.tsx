@@ -80,7 +80,7 @@ const LoginForm = forwardRef((props, ref) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const isDisabled = loading || isAuthenticated;
-
+  console.log("-------------->", loading, isAuthenticated)
   // 🌐 Your backend base URL
   const API_BASE_URL = import.meta.env.VITE_API_PROD_URL || "http://localhost:5000/api";
 
@@ -147,7 +147,7 @@ const LoginForm = forwardRef((props, ref) => {
             {error && <ErrorText>{error}</ErrorText>}
             {user && (
               <p style={{ color: "green", textAlign: "center" }}>
-                Welcome, {user.fullName}
+                {/* Welcome, {user.fullName} */}
               </p>
             )}
 

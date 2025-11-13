@@ -5,6 +5,7 @@ import {
   LOGIN_FAILURE,
   LOGOUT,
   RESET_AUTH_STATE,
+  REHYDRATE_AUTH,
   type AuthState,
   type AuthActionTypes,
 } from "../types/authTypes";
@@ -14,7 +15,8 @@ const initialState: AuthState = {
   user: null,
   loading: false,
   error: null,
-  isAuthenticated: null,
+  isAuthenticated: false,
+  status: "idle",
 };
 
 export const authReducer = (
@@ -23,7 +25,12 @@ export const authReducer = (
 ): AuthState => {
   switch (action.type) {
     case LOGIN_REQUEST:
-      return { ...state, loading: true, error: null };
+      return {
+        ...state,
+        loading: true,
+        error: null,
+        status: "loading",
+      };
 
     case LOGIN_SUCCESS:
       return {
@@ -31,16 +38,41 @@ export const authReducer = (
         loading: false,
         token: action.payload.token,
         user: action.payload.user,
-        isAuthenticated: "true",
+        isAuthenticated: true,
+        error: null,
+        status: "succeeded",
       };
 
     case LOGIN_FAILURE:
-      return { ...state, loading: false, error: action.payload };
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        isAuthenticated: false,
+        status: "failed",
+      };
 
     case LOGOUT:
       return { ...initialState };
 
-    case RESET_AUTH_STATE: // 🆕 reset case
+    case RESET_AUTH_STATE:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        status: "idle",
+      };
+
+    case REHYDRATE_AUTH:
+      if (action.payload.token && action.payload.user) {
+        return {
+          ...state,
+          token: action.payload.token,
+          user: action.payload.user,
+          isAuthenticated: true,
+          status: "succeeded",
+        };
+      }
       return { ...initialState };
 
     default:

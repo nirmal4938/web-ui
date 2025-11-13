@@ -1,31 +1,28 @@
 // src/state/types/authTypes.ts
-
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILURE = "LOGIN_FAILURE";
 export const LOGOUT = "LOGOUT";
-export const RESET_AUTH_STATE = "RESET_AUTH_STATE"; // 🆕 Add this
+export const RESET_AUTH_STATE = "RESET_AUTH_STATE";
+export const REHYDRATE_AUTH = "REHYDRATE_AUTH";
 
 export interface User {
   id: string;
-  fullName: string;
+  name: string;
   email: string;
-  avatarUrl?: any
-  organization?: {
-    id: string;
-    name: string;
-  };
+  avatar?: string;
 }
 
 export interface AuthState {
-  isAuthenticated: string | null;
   token: string | null;
   user: User | null;
   loading: boolean;
   error: string | null;
+  isAuthenticated: boolean;
+  status: "idle" | "loading" | "succeeded" | "failed";
 }
 
-// Action Interfaces
+// Action interfaces
 interface LoginRequestAction {
   type: typeof LOGIN_REQUEST;
 }
@@ -40,8 +37,12 @@ interface LoginFailureAction {
 interface LogoutAction {
   type: typeof LOGOUT;
 }
-interface ResetAuthStateAction {   // 🆕 Add this
+interface ResetAuthAction {
   type: typeof RESET_AUTH_STATE;
+}
+interface RehydrateAuthAction {
+  type: typeof REHYDRATE_AUTH;
+  payload: { token: string | null; user: User | null };
 }
 
 export type AuthActionTypes =
@@ -49,4 +50,5 @@ export type AuthActionTypes =
   | LoginSuccessAction
   | LoginFailureAction
   | LogoutAction
-  | ResetAuthStateAction; // 🆕 Include here
+  | ResetAuthAction
+  | RehydrateAuthAction;

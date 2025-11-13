@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import styled, { keyframes, ThemeProvider } from "styled-components";
-import axios from "axios";
+import React, { useEffect, useState, useMemo } from "react";
+import styled, { keyframes, ThemeProvider, css } from "styled-components";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,15 +7,18 @@ import Confetti from "react-confetti";
 import { PageWrapper, TitleBar, Title, ToolbarActions } from "@components/layout";
 import Button from "@/components/atoms/Button/Button";
 import { defaultTheme } from "@/theme/theme";
-
+// import { electionService } from "@/services/api/electionService";
+import { electionService } from "@/api/electionService";
+// import Input from "@/components/atoms/Input/Input";
+import InputField from "@/components/atoms/InputField/InputField";
 const MySwal = withReactContent(Swal);
 
-/* ----------------------------- Animations ----------------------------- */
-const pulseAnimation = keyframes`
-  0% { transform: scale(1); box-shadow: 0 0 0 rgba(16,185,129,0.3);}
-  70% { transform: scale(1.02); box-shadow: 0 0 20px rgba(16,185,129,0.3);}
-  100% { transform: scale(1); box-shadow: 0 0 0 rgba(16,185,129,0);}
-`;
+// /* ----------------------------- Animations ----------------------------- */
+// const pulseAnimation = keyframes`
+//   0% { transform: scale(1); box-shadow: 0 0 0 rgba(16,185,129,0.3);}
+//   70% { transform: scale(1.02); box-shadow: 0 0 20px rgba(16,185,129,0.3);}
+//   100% { transform: scale(1); box-shadow: 0 0 0 rgba(16,185,129,0);}
+// `;
 
 /* ----------------------------- Styled Components ----------------------------- */
 const BoothWrapper = styled.div`
@@ -26,6 +28,21 @@ const BoothWrapper = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
   @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
   @media (max-width: 640px) { grid-template-columns: 1fr; }
+`;
+
+const SearchBarWrapper = styled.div`
+  margin: ${({ theme }) => theme.spacing(2)} 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+
+const pulseAnimation = keyframes`
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(16,185,129,0.3); }
+  70% { transform: scale(1.02); box-shadow: 0 0 20px rgba(16,185,129,0.3); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(16,185,129,0); }
 `;
 
 const CandidateCard = styled(motion.div)<{ voted?: boolean }>`
@@ -41,14 +58,37 @@ const CandidateCard = styled(motion.div)<{ voted?: boolean }>`
   box-shadow: ${({ theme }) => theme.CONTENT_SHADOW};
   cursor: ${({ voted }) => (voted ? "default" : "pointer")};
   transition: all 0.3s ease;
+
   &:hover {
     transform: ${({ voted }) => (!voted ? "translateY(-4px)" : "none")};
-    box-shadow: ${({ voted }) => (!voted ? "0 12px 28px rgba(0,0,0,0.12)" : "0 6px 20px rgba(16,185,129,0.2)")};
+    box-shadow: ${({ voted }) =>
+      !voted
+        ? "0 12px 28px rgba(0,0,0,0.12)"
+        : "0 6px 20px rgba(16,185,129,0.2)"};
   }
-  ${({ voted }) => voted && `animation: ${pulseAnimation} 1.5s infinite;`}
-  h3 { margin: ${({ theme }) => theme.spacing(2)} 0 ${({ theme }) => theme.spacing(1)}; font-weight: 700; font-size: ${({ theme }) => theme.font.size.h3}; font-family: 'Georgia', serif; }
-  p { margin: 4px 0; font-size: ${({ theme }) => theme.font.size.label}; line-height: 1.4; text-align: center; }
+
+  ${({ voted }) =>
+    voted &&
+    css`
+      animation: ${pulseAnimation} 1.5s infinite;
+    `}
+
+  h3 {
+    margin: ${({ theme }) => theme.spacing(2)} 0 ${({ theme }) => theme.spacing(1)};
+    font-weight: 700;
+    font-size: ${({ theme }) => theme.font.size.h3};
+    font-family: "Georgia", serif;
+    text-align: center;
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: ${({ theme }) => theme.font.size.label};
+    line-height: 1.4;
+    text-align: center;
+  }
 `;
+
 
 const PartySymbolWrapper = styled.div`
   width: 90px;
@@ -58,7 +98,7 @@ const PartySymbolWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+  margin: 0 auto ${({ theme }) => theme.spacing(1.5)};
 `;
 
 const PartySymbol = styled.img`
@@ -70,18 +110,85 @@ const PartySymbol = styled.img`
   padding: 6px;
 `;
 
-const VoteButton = styled(Button)<{ voted?: boolean }>`
-  background: ${({ voted, theme }) => (voted ? theme.GREY_DISABLED : theme.CTA_COLOR)};
-  cursor: ${({ voted }) => (voted ? "not-allowed" : "pointer")};
-  margin-top: auto;
+const pulse = keyframes`
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(31, 97, 135, 0); }
+  50% { transform: scale(1.03); box-shadow: 0 0 12px rgba(31, 97, 135, 0.25); }
+`;
+
+export const VoteButton = styled(motion.button)<{ voted?: boolean; disabled?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   width: 100%;
   font-weight: 700;
-  padding: 0.85rem 0;
   font-size: ${({ theme }) => theme.font.size.body};
+  padding: 0.9rem 1.2rem;
   border-radius: ${({ theme }) => theme.radius.md};
+  border: none;
+  outline: none;
+
+  /* Default styles */
+  background: ${({ theme, voted }) =>
+    voted ? theme.GREY_DISABLED : theme.CTA_COLOR};
   color: ${({ theme }) => theme.WHITE};
-  transition: all 0.3s ease;
-  &:hover { background: ${({ voted, theme }) => (voted ? theme.GREY_DISABLED : theme.CTA_COLOR_HOVER)}; }
+  cursor: ${({ voted }) => (voted ? "not-allowed" : "pointer")};
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease-in-out;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+
+  /* Optional pulse animation when just voted */
+  ${({ voted }) =>
+    voted &&
+    css`
+      animation: ${pulse} 2s ease-in-out infinite;
+    `}
+
+  &:hover {
+    ${({ theme, voted }) =>
+      !voted &&
+      css`
+        background: ${theme.CTA_COLOR_HOVER};
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(31, 97, 135, 0.25);
+      `}
+  }
+
+  &:active {
+    ${({ theme, voted }) =>
+      !voted &&
+      css`
+        background: ${theme.CTA_COLOR_LIGHT};
+        transform: scale(0.98);
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
+      `}
+  }
+
+  &:disabled {
+    background: ${({ theme }) => theme.GREY_DISABLED};
+    color: ${({ theme }) => theme.TEXT_MUTED};
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+
+  /* Ripple effect (optional subtle detail) */
+  &::after {
+    content: "";
+    position: absolute;
+    border-radius: inherit;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    transition: width 0.4s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
 `;
 
 const Banner = styled.div`
@@ -106,29 +213,45 @@ const Banner = styled.div`
 const SkeletonCard = styled.div`
   height: 320px;
   border-radius: ${({ theme }) => theme.radius.lg};
-  background: ${({ theme }) => theme.BG_GREY};
-  animation: shimmer 1.5s infinite linear;
-  @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
   background: linear-gradient(90deg, #f6f6f6 25%, #e0e0e0 50%, #f6f6f6 75%);
   background-size: 400% 100%;
+  animation: shimmer 1.5s infinite linear;
+  @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
 `;
 
-/* Ballot box and ballot animation */
 const BallotBoxWrapper = styled.div`
   position: fixed;
   bottom: ${({ theme }) => theme.spacing(4)};
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
-  height: 120px;
+  width: 220px;
+  height: 140px;
   background: ${({ theme }) => theme.CONTENT_CARD};
   border-radius: ${({ theme }) => theme.radius.lg};
-  border: 2px solid ${({ theme }) => theme.CTA_COLOR};
+  border: 3px solid ${({ theme }) => theme.CTA_COLOR};
+  box-shadow: ${({ theme }) => theme.CONTENT_SHADOW};
   display: flex;
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
-  box-shadow: ${({ theme }) => theme.CONTENT_SHADOW};
+`;
+
+const ReceiptCard = styled(motion.div)`
+  width: 160px;
+  background: #fffdfa;
+  border: 1px dashed ${({ theme }) => theme.CTA_COLOR};
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  font-size: 0.85rem;
+`;
+
+const ReceiptPartyLogo = styled.img`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-bottom: 4px;
 `;
 
 const BallotDrop = styled(motion.div)`
@@ -155,31 +278,66 @@ const Stamp = styled(motion.div)`
 /* ----------------------------- Component ----------------------------- */
 const VotingBoothPage: React.FC = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
+  const [filteredCandidates, setFilteredCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [votedCandidateId, setVotedCandidateId] = useState<string | null>(null);
   const [votedCandidateName, setVotedCandidateName] = useState<string | null>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [ballots, setBallots] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isVoting, setIsVoting] = useState(false);
 
   const isMobile = window.innerWidth < 640;
   const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
 
-  useEffect(() => {
-    const fetchCandidates = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_PROD_URL}/candidates`);
-        setCandidates(res.data.candidates || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+  /* ----------------------------- Load Candidates ----------------------------- */
+  const fetchCandidates = async () => {
+    setLoading(true);
+    try {
+      const data = await electionService.getCandidates();
+      setCandidates(data);
+      setFilteredCandidates(data);
+      // Optional: fetch user's vote if backend supports it
+      const userVote = await electionService.getUserVote(localStorage.getItem("token") || "");
+      if (userVote) {
+        setVotedCandidateId(userVote.candidate_id);
+        setVotedCandidateName(userVote.candidate_name);
       }
-    };
+    } catch (err: any) {
+      console.error(err);
+      MySwal.fire({
+        title: "Failed to load candidates",
+        text: "Check your internet or try again.",
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonText: "Retry",
+      }).then((res) => {
+        if (res.isConfirmed) {
+          return fetchCandidates();
+        }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchCandidates();
   }, []);
 
+  /* ----------------------------- Search Filter ----------------------------- */
+  useEffect(() => {
+    const filtered = candidates.filter(
+      (c) =>
+        c.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.partyName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCandidates(filtered);
+  }, [searchTerm, candidates]);
+
+  /* ----------------------------- Handle Vote ----------------------------- */
   const handleVote = async (candidateId: string, candidateName: string) => {
-    if (votedCandidateId) return;
+    if (votedCandidateId || isVoting) return;
 
     const result = await MySwal.fire({
       title: `Confirm Vote`,
@@ -191,23 +349,18 @@ const VotingBoothPage: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.post(
-          `${import.meta.env.VITE_API_PROD_URL}/votes`,
-          { candidateId },
-          { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-        );
-
-        // Trigger ballot drop first
+        setIsVoting(true);
+        await electionService.vote(candidateId, localStorage.getItem("token") || "");
         setBallots((prev) => [...prev, candidateId]);
-
-        // Delay stamp + confetti until ballot drop finishes (0.6s)
         setTimeout(() => {
           setVotedCandidateId(candidateId);
           setVotedCandidateName(candidateName);
           setShowBanner(true);
+          setIsVoting(false);
         }, 600);
       } catch (err: any) {
         console.error(err);
+        setIsVoting(false);
         MySwal.fire("Error", err.response?.data?.message || "Vote failed", "error");
       }
     }
@@ -217,22 +370,35 @@ const VotingBoothPage: React.FC = () => {
     <ThemeProvider theme={defaultTheme}>
       <PageWrapper>
         {showBanner && <Banner>You voted for {votedCandidateName}</Banner>}
-        {votedCandidateId && <Confetti recycle={false} numberOfPieces={200} />}
+        {votedCandidateId && <Confetti recycle={false} numberOfPieces={250} />}
 
         <TitleBar>
           <Title>🗳️ Voting Booth - 41 Nirmali</Title>
           <ToolbarActions>
-            <Button variant="outline" onClick={() => window.location.reload()}>Refresh</Button>
+            <Button variant="outline" onClick={fetchCandidates}>
+              Refresh
+            </Button>
           </ToolbarActions>
         </TitleBar>
 
+        {/* <SearchBarWrapper>
+          <InputField
+            placeholder="🔍 Search by name or party..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            // style={{ maxWidth: "300px", width: "100%" }}
+          />
+        </SearchBarWrapper> */}
+
         {loading ? (
           <BoothWrapper>
-            {[...Array(6)].map((_, idx) => <SkeletonCard key={idx} />)}
+            {[...Array(6)].map((_, idx) => (
+              <SkeletonCard key={idx} />
+            ))}
           </BoothWrapper>
         ) : (
           <BoothWrapper>
-            {candidates.map((c) => {
+            {filteredCandidates.map((c) => {
               const isVoted = votedCandidateId === c.id;
               return (
                 <CandidateCard
@@ -267,9 +433,14 @@ const VotingBoothPage: React.FC = () => {
                   <p><strong>Party:</strong> {c.partyName}</p>
                   <p><strong>Manifesto:</strong> {c.manifesto}</p>
 
-                  <VoteButton voted={!!votedCandidateId} onClick={() => handleVote(c.id, c.fullName)}>
-                    {isVoted ? "Voted" : votedCandidateId ? "Vote Disabled" : "Vote"}
-                  </VoteButton>
+     <VoteButton
+  voted={!!votedCandidateId}
+  disabled={!!votedCandidateId || isVoting}
+  whileTap={{ scale: 0.97 }}
+  onClick={() => handleVote(c.id, c.fullName)}
+>
+  {isVoted ? "✅ Voted" : votedCandidateId ? "Vote Disabled" : isVoting ? "Voting..." : "Vote"}
+</VoteButton>
                 </CandidateCard>
               );
             })}
@@ -277,15 +448,22 @@ const VotingBoothPage: React.FC = () => {
         )}
 
         {/* Ballot Box */}
-        <BallotBoxWrapper>
-          {ballots.map((b, idx) => (
-            <BallotDrop
-              key={idx}
-              initial={{ y: -100, rotate: -15, opacity: 0 }}
-              animate={{ y: 0, rotate: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-            />
-          ))}
+ <BallotBoxWrapper>
+          <AnimatePresence>
+            {ballots.map((b: any, idx) => (
+              <ReceiptCard
+                key={idx}
+                initial={{ y: -150, rotate: -15, opacity: 0 }}
+                animate={{ y: 0, rotate: 0, opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, delay: idx * 0.2 }}
+              >
+                <ReceiptPartyLogo src={b.partySymbol || "/default-symbol.png"} alt="party" />
+                <div><strong>{b.fullName}</strong></div>
+                <div style={{ fontSize: "0.75rem", color: "#444" }}>{b.partyName}</div>
+              </ReceiptCard>
+            ))}
+          </AnimatePresence>
         </BallotBoxWrapper>
       </PageWrapper>
     </ThemeProvider>
