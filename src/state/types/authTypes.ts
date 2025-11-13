@@ -11,6 +11,8 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
+  avatarUrl?: string;
+  fullName?: string;
 }
 
 export interface AuthState {
