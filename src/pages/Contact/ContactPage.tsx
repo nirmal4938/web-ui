@@ -158,7 +158,8 @@ const ContactPage: React.FC = () => (
       <ContactCard>
         <FaEnvelope />
         <h3>Email</h3>
-        <p><a href="mailto:contact@synqware.com">contact@synqware.com</a></p>
+        {/* <p><a href="mailto:contact@synqware.com">contact@synqware.com</a></p> */}
+        <p><a href="mailto:contact@synqware.com">azurewhisprer@gmail.com</a></p>
       </ContactCard>
 
       <ContactCard>
@@ -170,7 +171,7 @@ const ContactPage: React.FC = () => (
       <ContactCard>
         <FaMapMarkerAlt />
         <h3>Office</h3>
-        <p>Synqware Technologies Pvt. Ltd.<br />Supaul, Bihar, India — 852131</p>
+        <p>Synqware Technologies <br />Supaul, Bihar, India — 852131</p>
       </ContactCard>
 
       <ContactCard>

@@ -240,8 +240,7 @@ const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
         </div>
 
         <div className="footer-bottom">
-          © {new Date().getFullYear()} Synqware Technologies Pvt. Ltd. | All
-          rights reserved.
+          © {new Date().getFullYear()} Synqware Technologies 
         </div>
       </Footer>
     </Wrapper>

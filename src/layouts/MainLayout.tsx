@@ -97,8 +97,8 @@ const MainLayout: React.FC<{
 
         <StyledContentWrapper collapsed={collapsed}>{children}</StyledContentWrapper>
 
-        {footer && footer}
-        <AIChatbot />
+        {/* {footer && footer} */}
+        {/* <AIChatbot /> */}
       </MainSection>
     </LayoutWrapper>
   );

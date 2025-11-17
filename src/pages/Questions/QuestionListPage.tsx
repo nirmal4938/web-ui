@@ -1,131 +1,368 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import styled, { ThemeProvider } from "styled-components";
-import QuestionCard from "@/components/organisms/Question/QuestionCard";
-import { defaultTheme } from "@/theme/theme";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import "./styles/index.css";
 
-const PageWrapper = styled.div`display:flex; flex-direction:column; padding:${({ theme })=>theme.spacing(4)}; min-height:100vh;`;
-const TopBar = styled.div`display:flex; flex-direction:column; gap:${({ theme })=>theme.spacing(2)}; margin-bottom:${({ theme })=>theme.spacing(3)};
-  @media(min-width:768px){flex-direction:row; justify-content:space-between; align-items:center;}
-`;
-const ProgressBar = styled.div`height:10px;width:100%; background:${({ theme })=>theme.BG_GREY}; border-radius:${({ theme })=>theme.radius.sm}; overflow:hidden;`;
-const Progress = styled.div<{ progress: number }>`height:100%; width:${({ progress })=>progress}%; background:${({ theme })=>theme.CTA_COLOR}; transition:width 0.3s ease;`;
-const QuizWrapper = styled.div`display:flex; flex-direction:column; gap:${({ theme })=>theme.spacing(3)};`;
-const TimerWrapper = styled.div`font-weight:600;color:${({ theme })=>theme.CTA_COLOR_ALERT};`;
-const RecommendationPanel = styled.div`margin-top:${({ theme })=>theme.spacing(4)}; padding:${({ theme })=>theme.spacing(3)}; border:1px solid ${({ theme })=>theme.CONTENT_BORDER}; border-radius:${({ theme })=>theme.radius.md}; background:${({ theme })=>theme.CONTENT_CARD}; min-height:80px;`;
+/**
+ * Enhanced Assessment Page (10x upgrade)
+ * - Sidebar question palette with statuses (answered, flagged, review)
+ * - Keyboard shortcuts: Left/Right arrows, F to toggle flag, B to bookmark, Ctrl/Cmd+S to save
+ * - Fullscreen exam mode
+ * - Dark mode toggle
+ * - Autosave indicator + last saved time
+ * - Skeleton loader state
+ * - Simple MCQ organism example (single-select)
+ *
+ * This is still UI-first; integrate with your data layer later.
+ */
 
-interface Question { id:string; question:string; topic:string; difficulty:"Easy"|"Medium"|"Hard"; options:string[]; correctOption:string; }
-const PAGE_TIME = 30;
-const MOCK_QUESTIONS: Question[] = [
-  { id:"q1", question:"What is the capital of France?", topic:"Geography", difficulty:"Easy", options:["Paris","Rome","Madrid","Berlin"], correctOption:"Paris" },
-  { id:"q2", question:"What is 15 × 12?", topic:"Math", difficulty:"Medium", options:["170","180","160","190"], correctOption:"180" },
-  { id:"q3", question:"Who wrote 'Hamlet'?", topic:"Literature", difficulty:"Medium", options:["Shakespeare","Dickens","Tolstoy","Hemingway"], correctOption:"Shakespeare" },
-  { id:"q4", question:"Solve: ∫ x dx", topic:"Math", difficulty:"Hard", options:["x","x²/2 + C","1/x","ln(x)"], correctOption:"x²/2 + C" },
-];
+// Mock questions (replace with real data)
+const SAMPLE_QUESTIONS = Array.from({ length: 40 }).map((_, i) => ({
+  id: i + 1,
+  type: i % 6 === 0 ? "saq" : "mcq",
+  marks: i % 3 === 0 ? 2 : 1,
+  stem: `This is sample question ${i + 1}. Please choose the best option.`,
+  options:
+    i % 6 === 0
+      ? []
+      : [
+          { id: "a", text: "Option A" },
+          { id: "b", text: "Option B" },
+          { id: "c", text: "Option C" },
+          { id: "d", text: "Option D" },
+        ],
+}));
 
-const MemoizedQuestionCard = React.memo(QuestionCard);
+const formatTime = (d: Date) =>
+  `${d.getHours().toString().padStart(2, "0")}:${d
+    .getMinutes()
+    .toString()
+    .padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`;
 
-// --- Fully Independent Timer ---
-interface TimerProps { time:number; onTimeout:()=>void; keyProp:number; }
-const Timer: React.FC<TimerProps> = ({ time, onTimeout, keyProp }) => {
-  const [timeLeft, setTimeLeft] = useState(time);
-  const callbackRef = useRef(onTimeout);
-  callbackRef.current = onTimeout;
-
-  useEffect(() => {
-    setTimeLeft(time);
-    const interval = setInterval(() => {
-      setTimeLeft(prev => {
-        if(prev <= 1){ callbackRef.current(); return time; }
-        return prev-1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [time, keyProp]); // keyProp changes on question change
-
-  return <TimerWrapper>Time Left: {timeLeft}s</TimerWrapper>;
-};
-
-// --- Main Component ---
 const QuestionListPage: React.FC = () => {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions] = useState(SAMPLE_QUESTIONS);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [selectedQuestion, setSelectedQuestion] = useState<Question|null>(null);
-  const [recommendations, setRecommendations] = useState<Question[]>([]);
-  const [currentDifficulty, setCurrentDifficulty] = useState<"Easy"|"Medium"|"Hard">("Medium");
+  const [answers, setAnswers] = useState<Record<number, string | null>>({});
+  const [flagged, setFlagged] = useState<Record<number, boolean>>({});
+  const [bookmarked, setBookmarked] = useState<Record<number, boolean>>({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
-  const questionsRef = useRef<Question[]>([]);
-  const currentDifficultyRef = useRef<"Easy"|"Medium"|"Hard">("Medium");
-
-  useEffect(() => { 
-    setQuestions(MOCK_QUESTIONS); 
-    questionsRef.current = MOCK_QUESTIONS;
-  }, []);
-
-  const getRecommendations = useCallback((current:Question)=>questionsRef.current.filter(q=>q.id!==current.id).slice(0,2), []);
-
-  const computeNextDifficulty = useCallback((prevDiff:"Easy"|"Medium"|"Hard", correct:boolean):"Easy"|"Medium"|"Hard"=> {
-    if(correct) return prevDiff==="Easy"?"Medium":prevDiff==="Medium"?"Hard":"Hard";
-    return prevDiff==="Hard"?"Medium":prevDiff==="Medium"?"Easy":"Easy";
-  }, []);
-
-  const getNextQuestion = useCallback((correct:boolean):Question|null=>{
-    if(!selectedQuestion) return null;
-    const nextDiff = computeNextDifficulty(currentDifficultyRef.current, correct);
-    const remaining = questionsRef.current.filter(q=>q.difficulty===nextDiff && q.id!==selectedQuestion.id);
-    return remaining[0] || questionsRef.current.find(q=>q.id!==selectedQuestion.id) || null;
-  }, [selectedQuestion, computeNextDifficulty]);
-
-  const handleAnswer = useCallback((correct:boolean)=>{
-    const nextQuestion = getNextQuestion(correct);
-    setScore(prev=>correct?prev+1:prev);
-    if(nextQuestion){
-      setSelectedQuestion(nextQuestion);
-      setCurrentIndex(questionsRef.current.indexOf(nextQuestion));
-      setRecommendations(getRecommendations(nextQuestion));
-      const nextDiff = computeNextDifficulty(currentDifficultyRef.current, correct);
-      setCurrentDifficulty(nextDiff);
-      currentDifficultyRef.current = nextDiff; // update ref for timer
-    } else { setSelectedQuestion(null); }
-  }, [getNextQuestion, getRecommendations, computeNextDifficulty]);
+  // Derived
+  const total = questions.length;
+  const completedCount = useMemo(
+    () => Object.values(answers).filter(Boolean).length,
+    [answers]
+  );
 
   useEffect(() => {
-    if(!questions.length) return;
-    const first = questions.find(q=>q.difficulty===currentDifficulty) || questions[0];
-    setSelectedQuestion(first);
-    setCurrentIndex(questions.indexOf(first));
-    setRecommendations(getRecommendations(first));
-    currentDifficultyRef.current = currentDifficulty;
-  }, [questions]);
+    // Simulate initial loading
+    const t = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
 
-  const progress = useMemo(()=>((currentIndex+1)/questions.length)*100,[currentIndex,questions.length]);
+  // Autosave every 12s (UI-only demo)
+  useEffect(() => {
+    const id = setInterval(() => {
+      // perform quick UI autosave (simulate)
+      setIsSaving(true);
+      setTimeout(() => {
+        setLastSavedAt(new Date());
+        setIsSaving(false);
+      }, 450);
+    }, 12000);
+    return () => clearInterval(id);
+  }, []);
 
-  if(!questions.length || !selectedQuestion) return <div>Loading questions...</div>;
+  // Keyboard shortcuts
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        setCurrentIndex((p) => Math.min(p + 1, total - 1));
+      } else if (e.key === "ArrowLeft") {
+        setCurrentIndex((p) => Math.max(p - 1, 0));
+      } else if (e.key.toLowerCase() === "f") {
+        // toggle flag
+        setFlagged((prev) => ({ ...prev, [questions[currentIndex].id]: !prev[questions[currentIndex].id] }));
+      } else if (e.key.toLowerCase() === "b") {
+        setBookmarked((prev) => ({ ...prev, [questions[currentIndex].id]: !prev[questions[currentIndex].id] }));
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        // manual save
+        setIsSaving(true);
+        setTimeout(() => {
+          setLastSavedAt(new Date());
+          setIsSaving(false);
+        }, 500);
+      }
+    },
+    [currentIndex, questions, total]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onKeyDown]);
+
+  // Fullscreen toggle
+  const toggleFullscreen = useCallback(() => {
+    const el = document.documentElement;
+    if (!fullscreen) {
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if ((el as any).webkitRequestFullscreen) (el as any).webkitRequestFullscreen();
+      setFullscreen(true);
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
+      setFullscreen(false);
+    }
+  }, [fullscreen]);
+
+  // Dark mode add class
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) root.classList.add("dark");
+    else root.classList.remove("dark");
+  }, [darkMode]);
+
+  const goto = (index: number) => {
+    setCurrentIndex(index);
+    // scroll main into view if mobile
+    const main = document.querySelector(".assessment-main");
+    if (main) (main as HTMLElement).scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const saveAnswer = (qId: number, value: string | null) => {
+    setAnswers((prev) => ({ ...prev, [qId]: value }));
+  };
+
+  // MCQ option click
+  const handleOptionClick = (qId: number, optionId: string) => {
+    saveAnswer(qId, optionId);
+  };
+
+  // simple "save & next" action
+  const saveAndNext = () => {
+    const id = questions[currentIndex].id;
+    // if unanswered, mark as blank (null stays)
+    setIsSaving(true);
+    setTimeout(() => {
+      setLastSavedAt(new Date());
+      setIsSaving(false);
+      setCurrentIndex((p) => Math.min(p + 1, total - 1));
+    }, 350);
+  };
+
+  // sample renderers
+  const renderMCQ = (q: typeof SAMPLE_QUESTIONS[number]) => {
+    const selected = answers[q.id] ?? null;
+    return (
+      <div className="mcq">
+        <div className="options-grid" role="list" aria-label="MCQ options">
+          {q.options.map((opt) => (
+            <button
+              key={opt.id}
+              className={`option ${selected === opt.id ? "selected" : ""}`}
+              onClick={() => handleOptionClick(q.id, opt.id)}
+              aria-pressed={selected === opt.id}
+            >
+              <span className="option-radio" aria-hidden />
+              <span className="option-text">{opt.text}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderSAQ = (q: typeof SAMPLE_QUESTIONS[number]) => {
+    return (
+      <div className="saq">
+        <textarea
+          placeholder="Type your short answer here..."
+          value={answers[q.id] ?? ""}
+          onChange={(e) => saveAnswer(q.id, e.target.value)}
+          className="saq-input"
+          rows={4}
+        />
+      </div>
+    );
+  };
+
+  const currentQ = questions[currentIndex];
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <PageWrapper>
-        <TopBar>
-          <div>Quiz Mode: Question {currentIndex+1} of {questions.length} | Score: {score} | Difficulty: {currentDifficulty}</div>
-          <ProgressBar><Progress progress={progress}/></ProgressBar>
-          <Timer time={PAGE_TIME} onTimeout={()=>handleAnswer(false)} keyProp={currentIndex}/>
-        </TopBar>
+    <div className="assessment-container advanced">
+      {/* Header */}
+      <header className="assessment-header advanced-header">
+        <div className="header-left">
+          <h1 className="assessment-title">Assessment</h1>
+          <p className="assessment-sub">Mock Test • {total} Questions</p>
+        </div>
 
-        {selectedQuestion ? (
-          <QuizWrapper>
-            <MemoizedQuestionCard {...selectedQuestion} onAnswer={handleAnswer} timeLimit={PAGE_TIME}/>
-            <RecommendationPanel>
-              <h4>AI Recommended Questions:</h4>
-              <ul>
-                {recommendations.map(r=><li key={r.id}>{r.question} ({r.topic} - {r.difficulty})</li>)}
-              </ul>
-            </RecommendationPanel>
-          </QuizWrapper>
-        ) : (
-          <div><h3>Quiz Completed!</h3><p>Your Score: {score}/{questions.length}</p></div>
-        )}
-      </PageWrapper>
-    </ThemeProvider>
+        <div className="header-right">
+          <div className="header-controls">
+            <button
+              className={`icon-btn ${flagged[currentQ.id] ? "active" : ""}`}
+              title={flagged[currentQ.id] ? "Flagged" : "Flag Question (F)"}
+              onClick={() => setFlagged((p) => ({ ...p, [currentQ.id]: !p[currentQ.id] }))}
+              aria-pressed={!!flagged[currentQ.id]}
+            >
+              ⚑
+            </button>
+
+            <button
+              className={`icon-btn ${bookmarked[currentQ.id] ? "active" : ""}`}
+              title={bookmarked[currentQ.id] ? "Bookmarked (B)" : "Bookmark (B)"}
+              onClick={() => setBookmarked((p) => ({ ...p, [currentQ.id]: !p[currentQ.id] }))}
+              aria-pressed={!!bookmarked[currentQ.id]}
+            >
+              ★
+            </button>
+
+            <button className="icon-btn" title="Toggle fullscreen" onClick={toggleFullscreen}>
+              ⤢
+            </button>
+
+            <button
+              className="icon-btn"
+              title="Toggle dark mode"
+              onClick={() => setDarkMode((s) => !s)}
+              aria-pressed={darkMode}
+            >
+              {darkMode ? "🌙" : "☀️"}
+            </button>
+          </div>
+
+          <div className="timer-box small">
+            <div className="timer-value">00:{String(59 - (currentIndex % 60)).padStart(2, "0")}</div>
+            <div className="timer-label">Remaining</div>
+          </div>
+        </div>
+      </header>
+
+      {/* Body: Sidebar + Main */}
+      <div className="assessment-body">
+        {/* Sidebar navigator */}
+        <aside className="palette" aria-label="Question palette">
+          <div className="palette-header">
+            <div className="palette-summary">
+              <strong>{completedCount}</strong>
+              <span> answered</span>
+            </div>
+            <div className="palette-actions">
+              <button className="small" onClick={() => goto(0)}>Start</button>
+              <button className="small" onClick={() => goto(total - 1)}>End</button>
+            </div>
+          </div>
+
+          <div className="palette-grid" role="list">
+            {questions.map((q, idx) => {
+              const status = answers[q.id] ? "answered" : flagged[q.id] ? "flagged" : "unanswered";
+              return (
+                <button
+                  key={q.id}
+                  className={`palette-item ${idx === currentIndex ? "active" : ""} ${status}`}
+                  onClick={() => goto(idx)}
+                  aria-current={idx === currentIndex}
+                >
+                  {q.id}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="legend">
+            <span><span className="legend-dot answered" />Answered</span>
+            <span><span className="legend-dot flagged" />Flagged</span>
+            <span><span className="legend-dot unanswered" />Unanswered</span>
+          </div>
+        </aside>
+
+        {/* Main */}
+        <main className="assessment-main" aria-live="polite">
+          <div className="question-meta">
+            <div className="meta-left">
+              <span className="question-number">Q{currentQ.id}</span>
+              <span className="question-type-tag">{currentQ.type.toUpperCase()} • {currentQ.marks} Mark(s)</span>
+            </div>
+
+            <div className="meta-right">
+              <div className="save-indicator">
+                {isSaving ? <span className="saving">Saving…</span> : <span className="saved">Saved</span>}
+                {lastSavedAt && <span className="last-saved"> • {formatTime(lastSavedAt)}</span>}
+              </div>
+            </div>
+          </div>
+
+          <div className="question-box">
+            {loading ? (
+              <div className="skeleton">
+                <div className="skeleton-line short" />
+                <div className="skeleton-line long" />
+                <div className="skeleton-block" />
+              </div>
+            ) : (
+              <p className="question-text">{currentQ.stem}</p>
+            )}
+
+            <div className="question-tools">
+              <button className="tool-btn" onClick={() => setAnswers((p) => ({ ...p, [currentQ.id]: null }))}>Clear</button>
+              <button className="tool-btn" onClick={() => setFlagged((p) => ({ ...p, [currentQ.id]: !p[currentQ.id] }))}>
+                {flagged[currentQ.id] ? "Unflag" : "Flag"}
+              </button>
+              <button className="tool-btn" onClick={() => setBookmarked((p) => ({ ...p, [currentQ.id]: !p[currentQ.id] }))}>
+                {bookmarked[currentQ.id] ? "Unbookmark" : "Bookmark"}
+              </button>
+            </div>
+          </div>
+
+          <section className="question-body">
+            {loading ? (
+              <div className="skeleton-options">
+                <div className="skeleton-line" />
+                <div className="skeleton-line" />
+                <div className="skeleton-line" />
+                <div className="skeleton-line" />
+              </div>
+            ) : currentQ.type === "mcq" ? (
+              renderMCQ(currentQ)
+            ) : (
+              renderSAQ(currentQ)
+            )}
+          </section>
+        </main>
+      </div>
+
+      {/* Footer */}
+      <footer className="assessment-footer">
+        <div className="footer-left">
+          <button className="btn secondary" onClick={() => setCurrentIndex((p) => Math.max(p - 1, 0))}>
+            ← Previous
+          </button>
+          <button className="btn" onClick={saveAndNext}>
+            Save & Next →
+          </button>
+        </div>
+
+        <div className="footer-right">
+          <div className="progress-mini" aria-hidden>
+            {completedCount}/{total} answered
+          </div>
+          <button
+            className="btn danger"
+            onClick={() => {
+              if (confirm("Submit test? You can't change answers afterward.")) {
+                alert("Test submitted (demo).");
+              }
+            }}
+          >
+            Submit Test
+          </button>
+        </div>
+      </footer>
+    </div>
   );
 };
 
