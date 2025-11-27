@@ -190,7 +190,7 @@ const AppRoutes: React.FC = () => {
           }
         />
         <Route
-          path="/election/voting"
+          path="/election/voting/v2"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <MainLayout>
