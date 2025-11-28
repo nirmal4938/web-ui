@@ -18,7 +18,7 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 const axiosInstance = axios.create({
-  baseURL:   "http://localhost:5000/api",
+  baseURL:   import.meta.env.VITE_PROD_API_BASE_URL || "http://localhost:5000/api",
   headers: { "Content-Type": "application/json" },
   withCredentials: true, // needed for refresh cookies
 });
