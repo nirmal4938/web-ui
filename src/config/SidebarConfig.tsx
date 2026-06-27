@@ -57,16 +57,43 @@ export const sidebarConfig: NavItem[] = [
       { label: "Mock Tests", path: "/practice/mock-tests", permission: "practice:mocktests" },
     ],
   },
-  {
-    label: "Question Bank",
-    icon: <FaQuestionCircle />,
-    permission: "questions:view",
-    children: [
-      { label: "All 1000+ Questions", path: "/questions", permission: "questions:view" },
-      { label: "By Topic", path: "/questions/topics", permission: "questions:view" },
-      { label: "By Difficulty", path: "/questions/difficulty", permission: "questions:view" },
-    ],
-  },
+{
+  label: "Question Bank",
+  icon: <FaQuestionCircle />,
+  permission: "questions:view",
+  children: [
+    {
+      label: "Single Correct (SCQ)",
+      path: "/questions/scq",
+      permission: "questions:view",
+    },
+    {
+      label: "Multiple Correct (MCQ)",
+      path: "/questions/mcq-multiple",
+      permission: "questions:view",
+    },
+    {
+      label: "Numerical Answer Type (NAT)",
+      path: "/questions/nat",
+      permission: "questions:view",
+    },
+    {
+      label: "Matrix Match",
+      path: "/questions/matrix-match",
+      permission: "questions:view",
+    },
+    {
+      label: "Comprehension / Paragraph",
+      path: "/questions/comprehension",
+      permission: "questions:view",
+    },
+    {
+      label: "Assertion – Reason",
+      path: "/questions/assertion-reason",
+      permission: "questions:view",
+    },
+  ],
+},
   {
     label: "Students",
     icon: <FaUserGraduate />,

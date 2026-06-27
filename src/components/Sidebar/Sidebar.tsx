@@ -213,7 +213,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle, mobileOpen = fal
                         navigate(sub.path || "/");
                         if (isMobile && onMobileToggle) onMobileToggle();
                       }}
-                      style={{ fontSize: "0.85rem", paddingLeft: "2.5rem" }}
+                      style={{ fontSize: "0.65rem", paddingLeft: "0rem" }}
                     >
                       {sub.label}
                     </NavItemButton>
@@ -254,9 +254,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle, mobileOpen = fal
               <UserEmail>{user?.email || "Not logged in"}</UserEmail>
             </UserInfo>
           )}
-          <CollapseButton collapsed={collapsed} onClick={onToggle}>
+          {/* <CollapseButton collapsed={collapsed} onClick={onToggle}>
             {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
-          </CollapseButton>
+          </CollapseButton> */}
         </SidebarHeader>
 
         <NavSection>{renderNavItems()}</NavSection>

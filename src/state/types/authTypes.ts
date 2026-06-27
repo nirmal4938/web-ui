@@ -1,51 +1,213 @@
+// ===================================================================================
 // src/state/types/authTypes.ts
-export const LOGIN_REQUEST = "LOGIN_REQUEST";
-export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-export const LOGIN_FAILURE = "LOGIN_FAILURE";
-export const LOGOUT = "LOGOUT";
-export const RESET_AUTH_STATE = "RESET_AUTH_STATE";
-export const REHYDRATE_AUTH = "REHYDRATE_AUTH";
+// Enterprise Auth Types
+// SyncWare SaaS v2
+// ===================================================================================
+
+/* ============================================================================
+ * ACTION TYPES
+ * ========================================================================== */
+
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const LOGOUT = 'LOGOUT';
+export const RESET_AUTH_STATE = 'RESET_AUTH_STATE';
+export const REHYDRATE_AUTH = 'REHYDRATE_AUTH';
+
+/* ============================================================================
+ * USER
+ * ========================================================================== */
 
 export interface User {
   id: string;
-  name: string;
   email: string;
+
+  name?: string;
+  fullName?: string;
+
   avatar?: string;
   avatarUrl?: string;
-  fullName?: string;
 }
+
+/* ============================================================================
+ * ROLE
+ * ========================================================================== */
+
+export interface Role {
+  id: string;
+
+  name: string;
+
+  slug: string;
+
+  scope: 'platform' | 'business';
+
+  level: number;
+}
+
+/* ============================================================================
+ * BUSINESS CATEGORY
+ * ========================================================================== */
+
+export interface BusinessCategory {
+  id: string;
+
+  key: string;
+
+  name: string;
+
+  subdomain: string;
+}
+
+/* ============================================================================
+ * BUSINESS
+ * ========================================================================== */
+
+export interface Business {
+  id: string;
+
+  name: string;
+
+  slug: string;
+
+  domain?: string | null;
+
+  category: BusinessCategory;
+}
+
+/* ============================================================================
+ * AUTH STATE
+ * ========================================================================== */
 
 export interface AuthState {
+  /**
+   * JWT Access Token
+   */
   token: string | null;
+
+  /**
+   * Logged in user
+   */
   user: User | null;
+
+  /**
+   * Current role
+   */
+  role: Role | any;
+
+  /**
+   * Current Business
+   */
+  business: Business | null;
+
+  /**
+   * Current Scope
+   * platform | business
+   */
+  scope: 'platform' | 'business' | null;
+
+  /**
+   * Permission Slugs
+   */
+  permissions: string[];
+
+  /**
+   * User Businesses
+   */
+  businesses: Business[];
+
+  /**
+   * Loading State
+   */
   loading: boolean;
-  error: string | null;
+
+  /**
+   * Bootstrap Finished?
+   */
+  initialized: boolean;
+
+  /**
+   * Logged In?
+   */
   isAuthenticated: boolean;
-  status: "idle" | "loading" | "succeeded" | "failed";
+
+  /**
+   * Error
+   */
+  error: string | null;
+
+  /**
+   * Async Status
+   */
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
 }
 
-// Action interfaces
-interface LoginRequestAction {
+/* ============================================================================
+ * ACTIONS
+ * ========================================================================== */
+
+export interface LoginRequestAction {
   type: typeof LOGIN_REQUEST;
 }
-interface LoginSuccessAction {
+
+export interface LoginSuccessAction {
   type: typeof LOGIN_SUCCESS;
-  payload: { token: string; user: User };
+
+  payload: {
+    token: string;
+
+    user: User;
+
+    role: Role | any;
+
+    business: Business | null;
+
+    scope: 'platform' | 'business';
+
+    permissions: string[];
+
+    businesses: Business[];
+  };
 }
-interface LoginFailureAction {
+
+export interface LoginFailureAction {
   type: typeof LOGIN_FAILURE;
+
   payload: string;
 }
-interface LogoutAction {
+
+export interface LogoutAction {
   type: typeof LOGOUT;
 }
-interface ResetAuthAction {
+
+export interface ResetAuthAction {
   type: typeof RESET_AUTH_STATE;
 }
-interface RehydrateAuthAction {
+
+export interface RehydrateAuthAction {
   type: typeof REHYDRATE_AUTH;
-  payload: { token: string | null; user: User | null };
+
+  payload: {
+    token: string | null;
+
+    user: User | null;
+
+    role: Role | null;
+
+    business: Business | null;
+
+    scope: 'platform' | 'business' | null;
+
+    permissions: string[];
+
+    businesses: Business[];
+  };
 }
+
+/* ============================================================================
+ * UNION
+ * ========================================================================== */
 
 export type AuthActionTypes =
   | LoginRequestAction

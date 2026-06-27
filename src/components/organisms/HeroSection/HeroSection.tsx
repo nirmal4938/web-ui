@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import Title from "@/components/atoms/Title/Title";
-import ButtonPrimary from "@/components/atoms/ButtonPrimary/ButtonPrimary";
+import React from 'react';
+import styled from 'styled-components';
+import Title from '@/components/atoms/Title/Title';
+import ButtonPrimary from '@/components/atoms/ButtonPrimary/ButtonPrimary';
 
 const HeroWrapper = styled.section`
   display: flex;
@@ -47,15 +47,18 @@ const HeroSection: React.FC = () => {
   return (
     <HeroWrapper>
       <HeroContent>
-        <Title>Synqware — Where <Highlight>Software</Highlight> Meets <Highlight>Hardware</Highlight></Title>
+        <Title>
+          Syncware — Where <Highlight>Software</Highlight> Meets <Highlight>Hardware</Highlight>
+        </Title>
         <Tagline>
           Transform your business with next-gen APIs, SaaS platforms, and IoT integrations.
-          <br />We help you <Highlight>sync innovation with reality</Highlight>.
+          <br />
+          We help you <Highlight>sync innovation with reality</Highlight>.
         </Tagline>
         <ButtonPrimary>Start Your Project</ButtonPrimary>
 
         {/* Optional illustration (add later if available) */}
-        {/* <HeroImage src="/assets/images/hero-illustration.png" alt="Synqware Hero Illustration" /> */}
+        {/* <HeroImage src="/assets/images/hero-illustration.png" alt="Syncware Hero Illustration" /> */}
       </HeroContent>
     </HeroWrapper>
   );

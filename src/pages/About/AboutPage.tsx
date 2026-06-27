@@ -1,11 +1,11 @@
-import React from "react";
-import styled from "styled-components";
-import Title from "@/components/atoms/Title/Title";
-import { FaLightbulb, FaHandshake, FaCogs, FaRocket } from "react-icons/fa";
-import GoodTeam from "@/assets/illustrations/syncware_landing_page/good_team.svg";
-import IntegritySVG from "@/assets/illustrations/syncware_landing_page/trust.svg"
-import InnovationSVG from "@/assets/illustrations/syncware_landing_page/problem-solving.svg"
-import ExcellenceSVG from "@/assets/illustrations/syncware_landing_page/success.svg"
+import React from 'react';
+import styled from 'styled-components';
+import Title from '@/components/atoms/Title/Title';
+import { FaLightbulb, FaHandshake, FaCogs, FaRocket } from 'react-icons/fa';
+import GoodTeam from '@/assets/illustrations/syncware_landing_page/good_team.svg';
+import IntegritySVG from '@/assets/illustrations/syncware_landing_page/trust.svg';
+import InnovationSVG from '@/assets/illustrations/syncware_landing_page/problem-solving.svg';
+import ExcellenceSVG from '@/assets/illustrations/syncware_landing_page/success.svg';
 
 const PageWrapper = styled.section`
   background: linear-gradient(180deg, #f9fafc 0%, #eef2f6 100%);
@@ -23,7 +23,7 @@ const ContentBox = styled.div`
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
   padding: 60px 50px;
   text-align: center;
-  color: ${({ theme }) => theme.TEXT || "#333"};
+  color: ${({ theme }) => theme.TEXT || '#333'};
   line-height: 1.8;
 
   @media (max-width: 768px) {
@@ -36,12 +36,12 @@ const ContentBox = styled.div`
 
   p {
     font-size: 1.05rem;
-    color: ${({ theme }) => theme.TEXT_MUTED || "#555"};
+    color: ${({ theme }) => theme.TEXT_MUTED || '#555'};
     margin-bottom: 1.5rem;
   }
 
   strong {
-    color: ${({ theme }) => theme.CTA_COLOR || "#1F6187"};
+    color: ${({ theme }) => theme.CTA_COLOR || '#1F6187'};
   }
 `;
 
@@ -51,7 +51,7 @@ const Section = styled.div`
 
   h3 {
     font-size: 1.5rem;
-    color: ${({ theme }) => theme.CTA_COLOR || "#1F6187"};
+    color: ${({ theme }) => theme.CTA_COLOR || '#1F6187'};
     margin-bottom: 16px;
     display: flex;
     align-items: center;
@@ -60,7 +60,7 @@ const Section = styled.div`
 
   p {
     font-size: 1.05rem;
-    color: ${({ theme }) => theme.TEXT_MUTED || "#555"};
+    color: ${({ theme }) => theme.TEXT_MUTED || '#555'};
   }
 
   ul {
@@ -76,10 +76,10 @@ const Section = styled.div`
   }
 
   li::before {
-    content: "•";
+    content: '•';
     position: absolute;
     left: 0;
-    color: ${({ theme }) => theme.CTA_COLOR || "#1F6187"};
+    color: ${({ theme }) => theme.CTA_COLOR || '#1F6187'};
     font-weight: bold;
   }
 `;
@@ -88,8 +88,8 @@ const IconCircle = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.CTA_COLOR_LIGHT || "#e3f2fd"};
-  color: ${({ theme }) => theme.CTA_COLOR || "#1F6187"};
+  background: ${({ theme }) => theme.CTA_COLOR_LIGHT || '#e3f2fd'};
+  color: ${({ theme }) => theme.CTA_COLOR || '#1F6187'};
   border-radius: 50%;
   width: 36px;
   height: 36px;
@@ -118,12 +118,12 @@ const ValueCard = styled.div`
   h4 {
     margin-top: 12px;
     margin-bottom: 8px;
-    color: ${({ theme }) => theme.TEXT || "#222"};
+    color: ${({ theme }) => theme.TEXT || '#222'};
   }
 
   p {
     font-size: 0.95rem;
-    color: ${({ theme }) => theme.TEXT_MUTED || "#555"};
+    color: ${({ theme }) => theme.TEXT_MUTED || '#555'};
   }
 `;
 
@@ -139,43 +139,53 @@ const AboutPage: React.FC = () => (
   <PageWrapper>
     <ContentBox>
       <Title level="h2">
-        About <strong>Synqware</strong>
+        About <strong>Syncware</strong>
       </Title>
 
       <p>
-        <strong>Synqware</strong> is a forward-thinking technology company dedicated to connecting software,
-        hardware, and human experience. We help businesses synchronize systems, automate operations,
-        and build scalable digital ecosystems for the future.
+        <strong>Syncware</strong> is a forward-thinking technology company dedicated to connecting
+        software, hardware, and human experience. We help businesses synchronize systems, automate
+        operations, and build scalable digital ecosystems for the future.
       </p>
 
       <p>
-        From SaaS and IoT platforms to enterprise automation, Synqware empowers organizations to
-        <strong> innovate, scale, and simplify</strong> their technology landscape — securely and efficiently.
+        From SaaS and IoT platforms to enterprise automation, Syncware empowers organizations to
+        <strong> innovate, scale, and simplify</strong> their technology landscape — securely and
+        efficiently.
       </p>
 
       <Section>
         <h3>
-          <IconCircle><FaLightbulb /></IconCircle> Our Vision
+          <IconCircle>
+            <FaLightbulb />
+          </IconCircle>{' '}
+          Our Vision
         </h3>
         <p>
-          To become a globally trusted enabler of <strong>connected intelligence</strong> — where businesses,
-          data, and technology work together in harmony to create smarter outcomes.
+          To become a globally trusted enabler of <strong>connected intelligence</strong> — where
+          businesses, data, and technology work together in harmony to create smarter outcomes.
         </p>
       </Section>
 
       <Section>
         <h3>
-          <IconCircle><FaRocket /></IconCircle> Our Mission
+          <IconCircle>
+            <FaRocket />
+          </IconCircle>{' '}
+          Our Mission
         </h3>
         <p>
-          To simplify complex digital operations through intuitive, reliable, and secure platforms — aligning
-          innovation with real-world business needs.
+          To simplify complex digital operations through intuitive, reliable, and secure platforms —
+          aligning innovation with real-world business needs.
         </p>
       </Section>
 
       <Section>
         <h3>
-          <IconCircle><FaCogs /></IconCircle> What We Do
+          <IconCircle>
+            <FaCogs />
+          </IconCircle>{' '}
+          What We Do
         </h3>
         <ul>
           <li>Build scalable SaaS and automation platforms for enterprises.</li>
@@ -188,27 +198,38 @@ const AboutPage: React.FC = () => (
 
       <Section>
         <h3>
-          <IconCircle><FaHandshake /></IconCircle> Our Values
+          <IconCircle>
+            <FaHandshake />
+          </IconCircle>{' '}
+          Our Values
         </h3>
         <ValuesGrid>
-<ValueCard>
-  <img src={IntegritySVG} alt="Integrity" width="120" height="120" />
-  <h4>Integrity</h4>
-  <p>We build trust through transparency, accountability, and consistency in everything we do.</p>
-</ValueCard>
           <ValueCard>
-  <img src={InnovationSVG} alt="Integrity" width="120" height="120" />
+            <img src={IntegritySVG} alt="Integrity" width="120" height="120" />
+            <h4>Integrity</h4>
+            <p>
+              We build trust through transparency, accountability, and consistency in everything we
+              do.
+            </p>
+          </ValueCard>
+          <ValueCard>
+            <img src={InnovationSVG} alt="Integrity" width="120" height="120" />
 
             <h4>Innovation</h4>
-            <p>We constantly explore new ways to deliver meaningful digital impact and smarter automation.</p>
+            <p>
+              We constantly explore new ways to deliver meaningful digital impact and smarter
+              automation.
+            </p>
           </ValueCard>
           <ValueCard>
-  <img src={GoodTeam} alt="Integrity" width="120" height="120" />
+            <img src={GoodTeam} alt="Integrity" width="120" height="120" />
             <h4>Collaboration</h4>
-            <p>We work together with clients, partners, and teams to drive shared success and growth.</p>
+            <p>
+              We work together with clients, partners, and teams to drive shared success and growth.
+            </p>
           </ValueCard>
           <ValueCard>
-  <img src={ExcellenceSVG} alt="Integrity" width="120" height="120" />
+            <img src={ExcellenceSVG} alt="Integrity" width="120" height="120" />
 
             <h4>Excellence</h4>
             <p>We aim for quality and precision — every product, every project, every time.</p>
@@ -219,17 +240,20 @@ const AboutPage: React.FC = () => (
       <Section>
         <h3>Our Team</h3>
         <p>
-          Synqware is powered by a multidisciplinary team of engineers, designers, and strategists
-          who’ve built and scaled products across cloud, IoT, and SaaS domains.
-          Together, we deliver <strong>future-ready solutions</strong> with creativity and reliability.
+          Syncware is powered by a multidisciplinary team of engineers, designers, and strategists
+          who’ve built and scaled products across cloud, IoT, and SaaS domains. Together, we deliver{' '}
+          <strong>future-ready solutions</strong> with creativity and reliability.
         </p>
       </Section>
 
       <FooterNote>
         <p>
-          As we grow, Synqware continues to explore new frontiers in AI automation,
-          connected ecosystems, and human-centric design.  
-          <strong> We’re not just building software — we’re synchronizing the digital world.</strong>
+          As we grow, Syncware continues to explore new frontiers in AI automation, connected
+          ecosystems, and human-centric design.
+          <strong>
+            {' '}
+            We’re not just building software — we’re synchronizing the digital world.
+          </strong>
         </p>
       </FooterNote>
     </ContentBox>

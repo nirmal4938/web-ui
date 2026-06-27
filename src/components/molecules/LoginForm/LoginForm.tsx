@@ -1,22 +1,22 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import ButtonPrimary from "@/components/atoms/ButtonPrimary/ButtonPrimary";
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import ButtonPrimary from '@/components/atoms/ButtonPrimary/ButtonPrimary';
 import {
   InputWrapper,
   Input,
   Label,
   ErrorText,
-} from "@components/atoms/InputField/InputField.styles";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectIsAuthenticated } from "@state/selectors/authSelectors";
-import { Eye, EyeOff } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
-import styled from "styled-components";
-import GoogleLoginButton from "../GoogleLoginButton/GoogleLoginButton";
-
+} from '@components/atoms/InputField/InputField.styles';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectIsAuthenticated } from '@state/selectors/authSelectors';
+import { Eye, EyeOff } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
+import styled from 'styled-components';
+import GoogleLoginButton from '../GoogleLoginButton/GoogleLoginButton';
+import loginRedirect from '@/auth/LoginRedirect';
 // ---------- Styled Components ----------
 const PasswordWrapper = styled.div`
   position: relative;
@@ -80,27 +80,39 @@ const LoginForm = forwardRef((props, ref) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const isDisabled = loading || isAuthenticated;
-  console.log("-------------->", loading, isAuthenticated)
+  console.log('-------------->', loading, isAuthenticated);
   // 🌐 Your backend base URL
-  const API_BASE_URL = import.meta.env.VITE_API_PROD_URL || "http://localhost:5000/api";
+  const API_BASE_URL = import.meta.env.VITE_API_PROD_URL || 'http://localhost:5000/api';
 
   return (
     <Formik
-      initialValues={{ email: "", password: "" }}
+      initialValues={{ email: '', password: '' }}
       validationSchema={Yup.object({
-        email: Yup.string().email("Invalid email").required("Email is required"),
-        password: Yup.string().min(6, "Min 6 characters").required("Password is required"),
+        email: Yup.string().email('Invalid email').required('Email is required'),
+        password: Yup.string().min(6, 'Min 6 characters').required('Password is required'),
       })}
+      // onSubmit={async (values, { resetForm }) => {
+      //   if (isAuthenticated) return; // Prevent redundant login
+      //   const success = await login(values.email, values.password);
+      //   if (success) {
+      //     resetForm();
+      //     navigate("/");
+      //   }
+      // }}
       onSubmit={async (values, { resetForm }) => {
-        if (isAuthenticated) return; // Prevent redundant login
-        const success = await login(values.email, values.password);
-        if (success) {
-          resetForm();
-          navigate("/");
-        }
+        const res = await login(values.email, values.password);
+
+        if (!res) return;
+
+        resetForm();
+
+        // Enterprise Login Redirect
+        // LoginRedirect(res, navigate);
+        // loginRedirect(res, navigate);
+        loginRedirect(res);
       }}
     >
-      {(formik) => {
+      {formik => {
         useImperativeHandle(ref, () => ({
           resetForm: formik.resetForm,
         }));
@@ -127,10 +139,10 @@ const LoginForm = forwardRef((props, ref) => {
                 <Field
                   as={Input}
                   name="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   disabled={isDisabled}
                   placeholder="Enter your password"
-                  style={{ width: "100%", paddingRight: "40px" }}
+                  style={{ width: '100%', paddingRight: '40px' }}
                 />
                 <ToggleButton
                   type="button"
@@ -146,7 +158,7 @@ const LoginForm = forwardRef((props, ref) => {
             {/* Error / Success */}
             {error && <ErrorText>{error}</ErrorText>}
             {user && (
-              <p style={{ color: "green", textAlign: "center" }}>
+              <p style={{ color: 'green', textAlign: 'center' }}>
                 {/* Welcome, {user.fullName} */}
               </p>
             )}
@@ -154,21 +166,17 @@ const LoginForm = forwardRef((props, ref) => {
             {/* Email/Password Login */}
             <ButtonContainer>
               <ButtonPrimary type="submit" disabled={isDisabled}>
-                {isAuthenticated
-                  ? "Already Logged In"
-                  : loading
-                  ? "Logging in..."
-                  : "Login"}
+                {isAuthenticated ? 'Already Logged In' : loading ? 'Logging in...' : 'Login'}
               </ButtonPrimary>
             </ButtonContainer>
 
             {/* Divider or "OR" */}
-            <div style={{ textAlign: "center", margin: "16px 0", color: "#999" }}>or</div>
+            <div style={{ textAlign: 'center', margin: '16px 0', color: '#999' }}>or</div>
 
             {/* Google Login Button */}
-         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-    <GoogleLoginButton />
-  </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <GoogleLoginButton />
+            </div>
             {/* <ButtonContainer>
               <GoogleButton
                 type="button"

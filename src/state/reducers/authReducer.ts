@@ -1,4 +1,9 @@
+// ===================================================================================
 // src/state/reducers/authReducer.ts
+// Enterprise Auth Reducer
+// SyncWare SaaS v2
+// ===================================================================================
+
 import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
@@ -6,76 +11,171 @@ import {
   LOGOUT,
   RESET_AUTH_STATE,
   REHYDRATE_AUTH,
-  type AuthState,
   type AuthActionTypes,
-} from "../types/authTypes";
+  type AuthState,
+} from '../types/authTypes';
 
 const initialState: AuthState = {
   token: null,
+
   user: null,
+
+  role: null,
+
+  business: null,
+
+  scope: null,
+
+  permissions: [],
+
+  businesses: [],
+
   loading: false,
-  error: null,
+
+  initialized: false,
+
   isAuthenticated: false,
-  status: "idle",
+
+  error: null,
+
+  status: 'idle',
 };
 
-export const authReducer = (
-  state = initialState,
-  action: AuthActionTypes
-): AuthState => {
+export const authReducer = (state = initialState, action: AuthActionTypes): AuthState => {
   switch (action.type) {
+    ////////////////////////////////////////////////////////////////////////////
+    // LOGIN REQUEST
+    ////////////////////////////////////////////////////////////////////////////
+
     case LOGIN_REQUEST:
       return {
         ...state,
+
         loading: true,
+
         error: null,
-        status: "loading",
+
+        status: 'loading',
       };
+
+    ////////////////////////////////////////////////////////////////////////////
+    // LOGIN SUCCESS
+    ////////////////////////////////////////////////////////////////////////////
 
     case LOGIN_SUCCESS:
       return {
         ...state,
+
         loading: false,
-        token: action.payload.token,
-        user: action.payload.user,
+
+        initialized: true,
+
         isAuthenticated: true,
+
         error: null,
-        status: "succeeded",
+
+        status: 'succeeded',
+
+        token: action.payload.token,
+
+        user: action.payload.user,
+
+        role: action.payload.role,
+
+        business: action.payload.business,
+
+        scope: action.payload.scope,
+
+        permissions: action.payload.permissions,
+
+        businesses: action.payload.businesses,
       };
+
+    ////////////////////////////////////////////////////////////////////////////
+    // LOGIN FAILURE
+    ////////////////////////////////////////////////////////////////////////////
 
     case LOGIN_FAILURE:
       return {
         ...state,
+
         loading: false,
-        error: action.payload,
+
+        initialized: true,
+
         isAuthenticated: false,
-        status: "failed",
+
+        error: action.payload,
+
+        status: 'failed',
       };
 
-    case LOGOUT:
-      return { ...initialState };
+    ////////////////////////////////////////////////////////////////////////////
+    // REHYDRATE
+    ////////////////////////////////////////////////////////////////////////////
+
+    case REHYDRATE_AUTH:
+      return {
+        ...state,
+
+        token: action.payload.token,
+
+        user: action.payload.user,
+
+        role: action.payload.role,
+
+        business: action.payload.business,
+
+        scope: action.payload.scope,
+
+        permissions: action.payload.permissions,
+
+        businesses: action.payload.businesses,
+
+        initialized: true,
+
+        isAuthenticated: !!action.payload.token,
+
+        status: action.payload.token ? 'succeeded' : 'idle',
+
+        loading: false,
+
+        error: null,
+      };
+
+    ////////////////////////////////////////////////////////////////////////////
+    // RESET
+    ////////////////////////////////////////////////////////////////////////////
 
     case RESET_AUTH_STATE:
       return {
         ...state,
+
         loading: false,
+
         error: null,
-        status: "idle",
+
+        status: 'idle',
       };
 
-    case REHYDRATE_AUTH:
-      if (action.payload.token && action.payload.user) {
-        return {
-          ...state,
-          token: action.payload.token,
-          user: action.payload.user,
-          isAuthenticated: true,
-          status: "succeeded",
-        };
-      }
-      return { ...initialState };
+    ////////////////////////////////////////////////////////////////////////////
+    // LOGOUT
+    ////////////////////////////////////////////////////////////////////////////
+
+    case LOGOUT:
+      return {
+        ...initialState,
+
+        initialized: true,
+      };
+
+    ////////////////////////////////////////////////////////////////////////////
+    // DEFAULT
+    ////////////////////////////////////////////////////////////////////////////
 
     default:
       return state;
   }
 };
+
+export default authReducer;

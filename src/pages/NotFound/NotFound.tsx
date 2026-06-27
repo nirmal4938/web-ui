@@ -1,7 +1,7 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { FaHome } from "react-icons/fa";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { FaHome } from 'react-icons/fa';
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const NotFound: React.FC = () => {
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 120, delay: 0.2 }}
+        transition={{ type: 'spring', stiffness: 120, delay: 0.2 }}
         className="text-center"
       >
         <motion.h1
@@ -38,8 +38,8 @@ const NotFound: React.FC = () => {
           transition={{ delay: 0.6 }}
           className="text-gray-400 mt-3 max-w-md mx-auto"
         >
-          The page you’re looking for doesn’t exist or might have been moved.  
-          Don’t worry — let’s get you back on track.
+          The page you’re looking for doesn’t exist or might have been moved. Don’t worry — let’s
+          get you back on track.
         </motion.p>
 
         <motion.div
@@ -49,7 +49,7 @@ const NotFound: React.FC = () => {
           className="mt-8"
         >
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate('/')}
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-lg hover:shadow-blue-500/40 transition-all"
           >
             <FaHome />
@@ -64,7 +64,7 @@ const NotFound: React.FC = () => {
         transition={{ delay: 1 }}
         className="absolute bottom-8 text-sm text-gray-500"
       >
-        © {new Date().getFullYear()} Synqware. All rights reserved.
+        © {new Date().getFullYear()} Syncware. All rights reserved.
       </motion.div>
     </div>
   );

@@ -1,85 +1,203 @@
+// ===================================================================================
 // src/api/axiosInstance.ts
-import axios from "axios";
-import { store } from "@/state/store/store";
-import { logout } from "@/state/actions/authActions";
+// Enterprise Ready Axios Instance
+// SyncWare SaaS v2
+// ===================================================================================
+
+import axios, {
+  AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type InternalAxiosRequestConfig,
+} from 'axios';
+
+import { store } from '@/state/store/store';
+import { logout } from '@/state/actions/authActions';
+
+interface RetryRequest extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
+interface QueuePromise {
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}
 
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: QueuePromise[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
+/**
+ * Resolve queued requests after refresh
+ */
+const processQueue = (error: unknown = null, token: string | null = null) => {
+  failedQueue.forEach(promise => {
     if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
+      promise.reject(error);
+    } else if (token) {
+      promise.resolve(token);
     }
   });
+
   failedQueue = [];
 };
 
-const axiosInstance = axios.create({
-  baseURL:   import.meta.env.VITE_PROD_API_BASE_URL || "http://localhost:5000/api",
-  headers: { "Content-Type": "application/json" },
-  withCredentials: true, // needed for refresh cookies
+const API_URL =
+  import.meta.env.VITE_API_PROD_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  'http://localhost:5000/api';
+
+const axiosInstance: AxiosInstance = axios.create({
+  baseURL: API_URL,
+  timeout: 30000,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
 });
 
-// ✅ Add access token to every request
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+//////////////////////////////////////////////////////////////////////////////////////
+// REQUEST INTERCEPTOR
+//////////////////////////////////////////////////////////////////////////////////////
 
-// ✅ Handle 401 errors and try refresh
+axiosInstance.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const reduxToken = store.getState().auth.token;
+    const storageToken = localStorage.getItem('token');
+
+    const token = reduxToken || storageToken;
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
+//////////////////////////////////////////////////////////////////////////////////////
+// RESPONSE INTERCEPTOR
+//////////////////////////////////////////////////////////////////////////////////////
+
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  response => response,
 
-    // If unauthorized and we haven’t retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetryRequest;
+
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Ignore refresh endpoint loop
+    /////////////////////////////////////////////////////////////////////////////
+
+    if (originalRequest.url?.includes('/auth/refresh')) {
+      return Promise.reject(error);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Unauthorized
+    /////////////////////////////////////////////////////////////////////////////
+
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      ///////////////////////////////////////////////////////////////////////////
+      // Already Refreshing
+      ///////////////////////////////////////////////////////////////////////////
+
       if (isRefreshing) {
-        // Wait for refresh to finish
-        return new Promise(function (resolve, reject) {
-          failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return axiosInstance(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(axiosInstance(originalRequest));
+            },
+            reject,
+          });
+        });
       }
+
+      ///////////////////////////////////////////////////////////////////////////
+      // Start Refresh
+      ///////////////////////////////////////////////////////////////////////////
 
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        // Call refresh token API
         const refreshResponse = await axios.post(
-          `${import.meta.env.VITE_API_PROD_URL || "http://localhost:5000/api"}/auth/refresh`,
+          `${API_URL}/auth/refresh`,
           {},
-          { withCredentials: true }
+          {
+            withCredentials: true,
+          }
         );
 
-        const { token } = refreshResponse.data;
+        /////////////////////////////////////////////////////////////////////////
+        // Backend should return accessToken
+        /////////////////////////////////////////////////////////////////////////
 
-        // Save new token and retry failed requests
-        localStorage.setItem("token", token);
-        processQueue(null, token);
+        const accessToken = refreshResponse.data.accessToken || refreshResponse.data.token;
 
-        originalRequest.headers.Authorization = `Bearer ${token}`;
+        if (!accessToken) {
+          throw new Error('No access token returned.');
+        }
+
+        /////////////////////////////////////////////////////////////////////////
+        // Save Token
+        /////////////////////////////////////////////////////////////////////////
+
+        localStorage.setItem('token', accessToken);
+
+        processQueue(null, accessToken);
+
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
         return axiosInstance(originalRequest);
-      } catch (err) {
-        processQueue(err, null);
+      } catch (refreshError) {
+        /////////////////////////////////////////////////////////////////////////
+        // Refresh Failed
+        /////////////////////////////////////////////////////////////////////////
 
-        // Refresh failed — log out user
-        store.dispatch(logout() as any);
-        return Promise.reject(err);
+        processQueue(refreshError);
+
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
+        try {
+          store.dispatch<any>(logout());
+        } catch (_) {}
+
+        /////////////////////////////////////////////////////////////////////////
+        // Redirect Login
+        /////////////////////////////////////////////////////////////////////////
+
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+          window.location.href = '/login';
+        }
+
+        return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Forbidden (Authenticated but Unauthorized)
+    /////////////////////////////////////////////////////////////////////////////
+
+    if (error.response?.status === 403) {
+      console.warn('Access Denied (403)');
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Server Error
+    /////////////////////////////////////////////////////////////////////////////
+
+    if (error.response?.status === 500) {
+      console.error('Internal Server Error');
     }
 
     return Promise.reject(error);

@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Title from "@/components/atoms/Title/Title";
+import React from 'react';
+import styled from 'styled-components';
+import Title from '@/components/atoms/Title/Title';
 
 const Section = styled.section`
   background: ${({ theme }) => theme.SURFACE};
@@ -55,21 +55,21 @@ const Role = styled.p`
 const testimonials = [
   {
     quote:
-      "Synqware helped us digitize our school management system seamlessly. The team’s attention to detail was exceptional!",
-    author: "Ravi Kumar",
-    role: "Director, Sunrise Public School",
+      'Syncware helped us digitize our school management system seamlessly. The team’s attention to detail was exceptional!',
+    author: 'Ravi Kumar',
+    role: 'Director, Sunrise Public School',
   },
   {
     quote:
-      "We integrated Synqware’s cloud-based APIs into our healthcare system — everything just worked perfectly from day one.",
-    author: "Dr. Neha Sharma",
-    role: "Administrator, LifeCare Hospital",
+      'We integrated Syncware’s cloud-based APIs into our healthcare system — everything just worked perfectly from day one.',
+    author: 'Dr. Neha Sharma',
+    role: 'Administrator, LifeCare Hospital',
   },
   {
     quote:
-      "The team delivered a custom IoT dashboard for our manufacturing unit — it’s fast, reliable, and visually stunning.",
-    author: "Ankit Verma",
-    role: "CTO, NexGen Automation",
+      'The team delivered a custom IoT dashboard for our manufacturing unit — it’s fast, reliable, and visually stunning.',
+    author: 'Ankit Verma',
+    role: 'CTO, NexGen Automation',
   },
 ];
 

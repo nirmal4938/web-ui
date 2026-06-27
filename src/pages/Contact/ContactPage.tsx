@@ -1,7 +1,15 @@
-import React from "react";
-import styled from "styled-components";
-import Title from "@/components/atoms/Title/Title";
-import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaClock, FaLinkedin, FaTwitter, FaGlobe } from "react-icons/fa";
+import React from 'react';
+import styled from 'styled-components';
+import Title from '@/components/atoms/Title/Title';
+import {
+  FaEnvelope,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaClock,
+  FaLinkedin,
+  FaTwitter,
+  FaGlobe,
+} from 'react-icons/fa';
 
 const PageWrapper = styled.section`
   display: flex;
@@ -40,7 +48,9 @@ const ContactCard = styled.div`
   padding: 32px 24px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
   text-align: center;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 
   &:hover {
     transform: translateY(-6px);
@@ -158,30 +168,41 @@ const ContactPage: React.FC = () => (
       <ContactCard>
         <FaEnvelope />
         <h3>Email</h3>
-        {/* <p><a href="mailto:contact@synqware.com">contact@synqware.com</a></p> */}
-        <p><a href="mailto:contact@synqware.com">azurewhisprer@gmail.com</a></p>
+        {/* <p><a href="mailto:contact@Syncware.com">contact@Syncware.com</a></p> */}
+        <p>
+          <a href="mailto:contact@Syncware.com">azurewhisprer@gmail.com</a>
+        </p>
       </ContactCard>
 
       <ContactCard>
         <FaPhoneAlt />
         <h3>Phone</h3>
-        <p><a href="tel:+919876543210">+91 98765 43210</a></p>
+        <p>
+          <a href="tel:+919876543210">+91 98765 43210</a>
+        </p>
       </ContactCard>
 
       <ContactCard>
         <FaMapMarkerAlt />
         <h3>Office</h3>
-        <p>Synqware Technologies <br />Supaul, Bihar, India — 852131</p>
+        <p>
+          Syncware Technologies <br />
+          Supaul, Bihar, India — 852131
+        </p>
       </ContactCard>
 
       <ContactCard>
         <FaClock />
         <h3>Working Hours</h3>
-        <p>Mon – Sat: 9:30 AM – 6:00 PM<br />Closed on Sundays</p>
+        <p>
+          Mon – Sat: 9:30 AM – 6:00 PM
+          <br />
+          Closed on Sundays
+        </p>
       </ContactCard>
     </ContactGrid>
 
-    <FormWrapper onSubmit={(e) => e.preventDefault()}>
+    <FormWrapper onSubmit={e => e.preventDefault()}>
       <select required>
         <option value="">Select Inquiry Type</option>
         <option value="project">Project Collaboration</option>
@@ -200,12 +221,19 @@ const ContactPage: React.FC = () => (
 
     <FooterInfo>
       <p>
-        © {new Date().getFullYear()} Synqware Technologies — Building connected, cloud-ready, and intelligent systems.
+        © {new Date().getFullYear()} Syncware Technologies — Building connected, cloud-ready, and
+        intelligent systems.
       </p>
       <div className="socials">
-        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>
-        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
-        <a href="https://synqware.com" target="_blank" rel="noopener noreferrer"><FaGlobe /></a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+          <FaLinkedin />
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+          <FaTwitter />
+        </a>
+        <a href="https://Syncware.com" target="_blank" rel="noopener noreferrer">
+          <FaGlobe />
+        </a>
       </div>
     </FooterInfo>
   </PageWrapper>

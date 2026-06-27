@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import ButtonPrimary from "@/components/atoms/ButtonPrimary/ButtonPrimary";
-import Title from "@/components/atoms/Title/Title";
+import React from 'react';
+import styled from 'styled-components';
+import ButtonPrimary from '@/components/atoms/ButtonPrimary/ButtonPrimary';
+import Title from '@/components/atoms/Title/Title';
 
 const Section = styled.section`
   background: ${({ theme }) => theme.CTA_COLOR};
@@ -25,16 +25,16 @@ const Subtext = styled.p`
 const PaymentDemoSection: React.FC = () => {
   return (
     <Section>
-      <Title level="h2" style={{ color: "#fff" }}>
-        Experience Seamless Payments with Synqware
+      <Title level="h2" style={{ color: '#fff' }}>
+        Experience Seamless Payments with Syncware
       </Title>
       <Subtext>
-        Test our integrated payment demo — explore how Synqware securely handles online transactions, 
-        invoicing, and recurring billing for your SaaS or eCommerce app.
+        Test our integrated payment demo — explore how Syncware securely handles online
+        transactions, invoicing, and recurring billing for your SaaS or eCommerce app.
       </Subtext>
       <ButtonPrimary
-        onClick={() => window.open("/demo/payments", "_blank")}
-        style={{ background: "#fff", color: "#1F6187" }}
+        onClick={() => window.open('/demo/payments', '_blank')}
+        style={{ background: '#fff', color: '#1F6187' }}
       >
         Try Payment Demo
       </ButtonPrimary>

@@ -35,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Left: Hamburger + Title + Breadcrumbs */}
       <motion.div style={{ display: "flex", alignItems: "center", flex: 1, gap: "1rem" }}>
         {onMobileMenuToggle && (
-          <IconButton onClick={onMobileMenuToggle} title="Menu" style={{ fontSize: "1.4rem" }}>
+          <IconButton onClick={onMobileMenuToggle} title="Menu" style={{ fontSize: "1.4rem" }} disabled={true}>
             ☰
           </IconButton>
         )}

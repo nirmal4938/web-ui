@@ -46,6 +46,7 @@ export const defaultTheme: DefaultTheme = {
   CONTENT_BORDER: "#E5E7EB",
   CONTENT_SHADOW: "0 1px 3px rgba(0,0,0,0.08)",
   CONTENT_GRADIENT: "linear-gradient(135deg, #ffffff 0%, #f6f6f6 100%)",
+  DISABLED_BG: "f9f9f9",
 
   // Header styling
   HEADER_BG: "#FFFFFF",

@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import ButtonPrimary from "@/components/atoms/ButtonPrimary/ButtonPrimary";
-import Title from "@/components/atoms/Title/Title";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import styled from 'styled-components';
+import ButtonPrimary from '@/components/atoms/ButtonPrimary/ButtonPrimary';
+import Title from '@/components/atoms/Title/Title';
+import { useNavigate } from 'react-router-dom';
 
 const FooterWrapper = styled.footer`
   background: ${({ theme }) => theme.CTA_COLOR};
@@ -35,24 +35,24 @@ const FooterCTASection: React.FC = () => {
     <FooterWrapper>
       <Title level="h2">Ready to Build Something Great?</Title>
       <SubText>
-        Synqware helps you transform your digital vision into scalable, cloud-powered, and IoT-ready software solutions.
-        Let’s collaborate to create your next big innovation.
+        Syncware helps you transform your digital vision into scalable, cloud-powered, and IoT-ready
+        software solutions. Let’s collaborate to create your next big innovation.
       </SubText>
       <ButtonPrimary
         style={{
-          background: "white",
-          color: "#1F6187",
+          background: 'white',
+          color: '#1F6187',
           fontWeight: 600,
-          padding: "12px 24px",
-          fontSize: "1rem",
+          padding: '12px 24px',
+          fontSize: '1rem',
         }}
-        onClick={() => navigate("/contact")}
+        onClick={() => navigate('/contact')}
       >
         Get in Touch
       </ButtonPrimary>
 
       <FooterBottom>
-        © {new Date().getFullYear()} Synqware Technologies — All rights reserved.
+        © {new Date().getFullYear()} Syncware Technologies — All rights reserved.
       </FooterBottom>
     </FooterWrapper>
   );

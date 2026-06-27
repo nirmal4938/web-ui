@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 /* ---------------------- Layout Wrapper ---------------------- */
 interface NoAuthLayoutProps {
@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: ${({ theme }) => theme.BACKGROUND || "#fff"};
+  background-color: ${({ theme }) => theme.BACKGROUND || '#fff'};
 `;
 
 /* ---------------------- Header ---------------------- */
@@ -36,7 +36,7 @@ const Header = styled.header`
 const Logo = styled(Link)`
   font-size: 1.6rem;
   font-weight: 700;
-  color: ${({ theme }) => theme.CTA_COLOR_LIGHT || "#0a2540"};
+  color: ${({ theme }) => theme.CTA_COLOR_LIGHT || '#0a2540'};
   text-decoration: none;
   letter-spacing: 0.5px;
 `;
@@ -49,12 +49,12 @@ const Nav = styled.nav<{ open?: boolean }>`
 
   a {
     font-size: 1rem;
-    color: ${({ theme }) => theme.TEXT || "#333"};
+    color: ${({ theme }) => theme.TEXT || '#333'};
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: ${({ theme }) => theme.CTA_COLOR_LIGHT || "#0a2540"};
+      color: ${({ theme }) => theme.CTA_COLOR_LIGHT || '#0a2540'};
     }
   }
 
@@ -70,7 +70,7 @@ const Nav = styled.nav<{ open?: boolean }>`
     gap: 1rem;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease-in-out;
-    max-height: ${({ open }) => (open ? "300px" : "0")};
+    max-height: ${({ open }) => (open ? '300px' : '0')};
     overflow: hidden;
     opacity: ${({ open }) => (open ? 1 : 0)};
   }
@@ -118,7 +118,7 @@ const MenuButton = styled.button`
 
   @media (max-width: 768px) {
     display: block;
-    color: ${({ theme }) => theme.TEXT || "#333"};
+    color: ${({ theme }) => theme.TEXT || '#333'};
   }
 `;
 
@@ -190,11 +190,9 @@ const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
   return (
     <Wrapper>
       <Header>
-        <Logo to="/home-page">Synqware</Logo>
+        <Logo to="/home-page">Syncware</Logo>
 
-        <MenuButton onClick={() => setMenuOpen((o) => !o)}>
-          {menuOpen ? "✕" : "☰"}
-        </MenuButton>
+        <MenuButton onClick={() => setMenuOpen(o => !o)}>{menuOpen ? '✕' : '☰'}</MenuButton>
 
         <Nav open={menuOpen}>
           <Link to="/about-us" onClick={() => setMenuOpen(false)}>
@@ -214,11 +212,10 @@ const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
       <Footer>
         <div className="footer-grid">
           <div>
-            <h4>Synqware Technologies</h4>
+            <h4>Syncware Technologies</h4>
             <p>
-              Building secure and scalable SaaS solutions for teams and
-              enterprises. Empowering digital workflows with simplicity and
-              trust.
+              Building secure and scalable SaaS solutions for teams and enterprises. Empowering
+              digital workflows with simplicity and trust.
             </p>
           </div>
 
@@ -239,9 +236,7 @@ const NoAuthLayout: React.FC<NoAuthLayoutProps> = ({ children }) => {
           </div>
         </div>
 
-        <div className="footer-bottom">
-          © {new Date().getFullYear()} Synqware Technologies 
-        </div>
+        <div className="footer-bottom">© {new Date().getFullYear()} Syncware Technologies</div>
       </Footer>
     </Wrapper>
   );

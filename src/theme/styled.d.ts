@@ -72,6 +72,7 @@ declare module "styled-components" {
     CONTENT_BORDER: string;
     CONTENT_SHADOW: string;
     CONTENT_GRADIENT: string;
+    DISABLED_BG: string;
 
     // 🧭 Header styling
     HEADER_BG: string;

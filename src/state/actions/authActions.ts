@@ -1,5 +1,10 @@
+// ===================================================================================
 // src/state/actions/authActions.ts
-import type { Dispatch } from "redux";
+// Enterprise Auth Actions
+// ===================================================================================
+
+import type { Dispatch } from 'redux';
+
 import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
@@ -8,87 +13,182 @@ import {
   RESET_AUTH_STATE,
   REHYDRATE_AUTH,
   type AuthActionTypes,
-} from "../types/authTypes";
-import { AuthService } from "@/api/authService";
+  type Role,
+} from '../types/authTypes';
 
-// 🔐 LOGIN ACTION
+import { AuthService } from '@/api/authService';
+
+//////////////////////////////////////////////////////////////////////////////////////
+// LOGIN
+//////////////////////////////////////////////////////////////////////////////////////
+
 export const login =
   (email: string, password: string) =>
-  async (dispatch: Dispatch<AuthActionTypes>): Promise<boolean> => {
-    dispatch({ type: LOGIN_REQUEST });
+  async (dispatch: Dispatch<AuthActionTypes>): Promise<any> => {
+    dispatch({
+      type: LOGIN_REQUEST,
+    });
+
     try {
-      const response = await AuthService.login({ email, password });
-      const { token, user } = response;
+      const response = await AuthService.login({
+        email,
+        password,
+      });
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      const { accessToken, user, role, business, scope, permissions, businesses } = response;
 
-      dispatch({ type: LOGIN_SUCCESS, payload: { token, user } });
-      return true;
+      AuthService.saveAccessToken(accessToken);
+      AuthService.saveUser(user);
+
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: {
+          token: accessToken,
+          user,
+          role,
+          business,
+          scope,
+          permissions,
+          businesses,
+        },
+      });
+
+      return response;
     } catch (error: any) {
-      const message =
-        error.response?.data?.message || "Invalid email or password.";
-      dispatch({ type: LOGIN_FAILURE, payload: message });
-      return false;
+      dispatch({
+        type: LOGIN_FAILURE,
+        payload: error?.response?.data?.message || 'Invalid email or password.',
+      });
+
+      return null;
     }
   };
 
-// 🚪 LOGOUT ACTION
+//////////////////////////////////////////////////////////////////////////////////////
+// LOGOUT
+//////////////////////////////////////////////////////////////////////////////////////
+
 export const logout =
   () =>
   async (dispatch: Dispatch<AuthActionTypes>): Promise<void> => {
     try {
       await AuthService.logout();
-    } catch (error) {
-      console.warn("Logout API call failed, continuing local cleanup.", error);
+    } catch (err) {
+      console.warn('Logout API failed.', err);
     } finally {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      dispatch({ type: LOGOUT });
+      AuthService.clearLocalSession();
+
+      dispatch({
+        type: LOGOUT,
+      });
     }
   };
 
-// 🔄 RESET AUTH STATE
+//////////////////////////////////////////////////////////////////////////////////////
+// RESET
+//////////////////////////////////////////////////////////////////////////////////////
+
 export const resetAuth = (): AuthActionTypes => ({
   type: RESET_AUTH_STATE,
 });
 
-// ♻️ REHYDRATE AUTH (from localStorage)
+//////////////////////////////////////////////////////////////////////////////////////
+// REHYDRATE
+//////////////////////////////////////////////////////////////////////////////////////
+
 export const rehydrateAuth = (): AuthActionTypes => {
-  const token = localStorage.getItem("token");
-  const userStr = localStorage.getItem("user");
-  const user = userStr ? JSON.parse(userStr) : null;
+  const token = AuthService.getAccessToken();
+
+  const user = AuthService.getUser();
 
   return {
     type: REHYDRATE_AUTH,
-    payload: { token, user },
+
+    payload: {
+      token,
+
+      user,
+
+      role: null,
+
+      business: null,
+
+      scope: null,
+
+      permissions: [],
+
+      businesses: [],
+    },
   };
 };
 
-// 🔐 GOOGLE LOGIN
-export const loginWithGoogle =
-  () => async (dispatch: Dispatch<AuthActionTypes>): Promise<void> => {
-    dispatch({ type: LOGIN_REQUEST });
-    try {
-      // 🚧 If this returns a token/user directly:
-      const response: any = await AuthService.loginWithGoogle();
+//////////////////////////////////////////////////////////////////////////////////////
+// BOOTSTRAP
+// Called by AuthProvider
+//////////////////////////////////////////////////////////////////////////////////////
 
-      if (response?.token && response?.user) {
-        const { token, user } = response;
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-        dispatch({ type: LOGIN_SUCCESS, payload: { token, user } });
-      } else {
-        // If using redirect OAuth flow:
-        dispatch({
-          type: LOGIN_FAILURE,
-          payload: "Redirecting to Google login...",
-        });
+export const bootstrapAuth =
+  () =>
+  async (dispatch: Dispatch<AuthActionTypes>): Promise<boolean> => {
+    try {
+      const token = AuthService.getAccessToken();
+
+      if (!token) {
+        return false;
       }
+
+      const profile = await AuthService.getProfile();
+
+      dispatch({
+        type: LOGIN_SUCCESS,
+
+        payload: {
+          token,
+
+          user: profile.user,
+
+          role: profile.role ?? null,
+
+          business: profile.business ?? null,
+
+          scope: profile.scope ?? null,
+
+          permissions: profile.permissions ?? [],
+
+          businesses: profile.businesses ?? [],
+        },
+      });
+
+      return true;
+    } catch (err) {
+      AuthService.clearLocalSession();
+
+      dispatch({
+        type: LOGOUT,
+      });
+
+      return false;
+    }
+  };
+
+//////////////////////////////////////////////////////////////////////////////////////
+// GOOGLE LOGIN
+//////////////////////////////////////////////////////////////////////////////////////
+
+export const loginWithGoogle =
+  () =>
+  async (dispatch: Dispatch<AuthActionTypes>): Promise<void> => {
+    dispatch({
+      type: LOGIN_REQUEST,
+    });
+
+    try {
+      await AuthService.loginWithGoogle();
     } catch (error: any) {
-      const message =
-        error.response?.data?.message ||
-        "Google login initialization failed.";
-      dispatch({ type: LOGIN_FAILURE, payload: message });
+      dispatch({
+        type: LOGIN_FAILURE,
+
+        payload: error?.response?.data?.message || 'Google login initialization failed.',
+      });
     }
   };
