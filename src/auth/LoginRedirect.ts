@@ -86,7 +86,15 @@ export const loginRedirect = (response: LoginResponse) => {
     // PRODUCTION
     /////////////////////////////////////////////////////////////////////////
 
-    window.location.replace(`https://${response.business.domain}/bootstrap`);
+    const session = btoa(
+      JSON.stringify({
+        accessToken: response.accessToken,
+        businessId: response.business.id,
+        timestamp: Date.now(),
+      })
+    );
+
+    window.location.replace(`${response.redirectUrl}/bootstrap?session=${session}`);
 
     return;
   }
