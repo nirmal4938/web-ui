@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { LOGIN_SUCCESS } from "@state/types/authTypes";
-import { AuthService } from "@/api/authService";
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { LOGIN_SUCCESS } from '@state/types/authTypes';
+import { AuthService } from '@/api/authService';
 
 const AuthSuccessPage: React.FC = () => {
   const navigate = useNavigate();
@@ -10,24 +10,24 @@ const AuthSuccessPage: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const token = params.get('token');
 
     if (token) {
-      localStorage.setItem("token", token);
+      localStorage.setItem('token', token);
 
       // Fetch user details using token
-      console.log("token", token)
-      AuthService.getProfile(token)
-        .then((user) => {
-          localStorage.setItem("user", JSON.stringify(user));
+      console.log('token', token);
+      AuthService.getProfile()
+        .then(user => {
+          localStorage.setItem('user', JSON.stringify(user));
           dispatch({ type: LOGIN_SUCCESS, payload: { token, user } });
-          navigate("/");
+          navigate('/');
         })
         .catch(() => {
-          navigate("/login");
+          navigate('/login');
         });
     } else {
-      navigate("/login");
+      navigate('/login');
     }
   }, [dispatch, navigate]);
 
