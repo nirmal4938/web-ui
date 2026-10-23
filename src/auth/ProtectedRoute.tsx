@@ -29,8 +29,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   ////////////////////////////////////////////////////////////////////////////
   // Wait for bootstrap
   ////////////////////////////////////////////////////////////////////////////
-
-  if (!initialized || loading) {
+  // console.log('loading', loading, initialized);
+  if (loading) {
     return (
       <div
         style={{

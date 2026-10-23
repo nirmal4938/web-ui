@@ -138,6 +138,10 @@ export const sidebarConfig: NavItem[] = [
       { label: "Users", path: "/admin/users", permission: "admin:users" },
       { label: "Roles", path: "/admin/roles", permission: "admin:roles" },
       { label: "Permissions", path: "/admin/permissions", permission: "admin:permissions" },
+      { label: "Tenants Management", path: "/admin/tenants", permission: "admin:tenants" },
+      { label: "Subdomain Matrix", path: "/admin/subdomains", permission: "admin:subdomains" },
+      { label: "Plan Billing", path: "/admin/billing", permission: "admin:billing" },
+      { label: "System Configurations", path: "/admin/settings", permission: "admin:settings" },
     ],
   },
 ];

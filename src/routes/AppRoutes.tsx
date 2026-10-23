@@ -20,6 +20,7 @@ import TermsPage from '@pages/policies/TermsPage';
 import PrivacyPage from '@pages/policies/PrivacyPage';
 import RefundPolicyPage from '@pages/policies/RefundPolicyPage';
 import ShippingPolicyPage from '@pages/policies/ShippingPolicyPage';
+import PracticeDashboardPage from '@/pages/Practice/PracticeDashboardPage';
 
 // Guards
 // Auth
@@ -58,6 +59,18 @@ import { SCQ } from '@/pages/Questions/SCQPage';
 import { MCQ } from '@/pages/Questions/MCQPage';
 import { NAT } from '@/pages/Questions/NATPage';
 import { MatrixMatch } from '@/pages/Questions/MatrixMatchPage';
+
+const AdminPagePlaceholder: React.FC<{ title: string }> = ({ title }) => (
+  <section>
+    <h1>{title}</h1>
+    <p>This administration page is coming soon.</p>
+  </section>
+);
+
+const TenantManagementPage = () => <AdminPagePlaceholder title="Tenants Management" />;
+const SubdomainConfigPage = () => <AdminPagePlaceholder title="Subdomain Matrix" />;
+const BillingPage = () => <AdminPagePlaceholder title="Plan Billing" />;
+const SystemSettingsPage = () => <AdminPagePlaceholder title="System Configurations" />;
 
 const AppRoutes: React.FC = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -111,6 +124,17 @@ const AppRoutes: React.FC = () => {
         />
 
         <Route
+          path="/practice/mock-tests"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <PracticeDashboardPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/teams"
           element={
             <ProtectedRoute>
@@ -122,6 +146,42 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* --- Administration Routes --- */}
+        {[
+          {
+            path: '/admin/tenants',
+            permission: 'admin:tenants',
+            element: <TenantManagementPage />,
+          },
+          {
+            path: '/admin/subdomains',
+            permission: 'admin:subdomains',
+            element: <SubdomainConfigPage />,
+          },
+          {
+            path: '/admin/billing',
+            permission: 'admin:billing',
+            element: <BillingPage />,
+          },
+          {
+            path: '/admin/settings',
+            permission: 'admin:settings',
+            element: <SystemSettingsPage />,
+          },
+        ].map(({ path, permission, element }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <ProtectedRoute>
+                <PermissionGuard permission={permission}>
+                  <MainLayout>{element}</MainLayout>
+                </PermissionGuard>
+              </ProtectedRoute>
+            }
+          />
+        ))}
 
         {/* --- Fallback --- */}
         <Route

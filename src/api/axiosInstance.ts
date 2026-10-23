@@ -41,7 +41,7 @@ const processQueue = (error: unknown = null, token: string | null = null) => {
   failedQueue = [];
 };
 
-const API_URL = import.meta.env.VITE_PROD_API_BASE_URL || import.meta.env.VITE_DEV_API_BASE_URL;
+const API_URL = import.meta.env.VITE_DEV_API_BASE_URL;
 ('http://localhost:5000/api');
 console.log('API_URL', API_URL);
 const axiosInstance: AxiosInstance = axios.create({
