@@ -1,147 +1,151 @@
-import { 
-  FaBook, 
-  FaLayerGroup, 
-  FaClipboardList, 
-  FaChartBar, 
-  FaUserGraduate, 
-  FaCogs, 
+import {
+  FaBook,
+  FaLayerGroup,
+  FaClipboardList,
+  FaChartBar,
+  FaUserGraduate,
+  FaCogs,
   FaQuestionCircle,
   FaTrophy,
-  FaUserAlt, 
-  FaVoteYea
-} from "react-icons/fa";
+  FaUserAlt,
+  FaVoteYea,
+} from 'react-icons/fa';
 
-import type { NavItem } from "@/types/navigation";
-import React from "react";
+import type { NavItem } from '@/types/navigation';
+import React from 'react';
 
 export const SIDEBAR_WIDTH = {
-  collapsed: "72",
-  expanded: "240",
+  collapsed: '72',
+  expanded: '240',
 };
 
 export const sidebarConfig: NavItem[] = [
   {
-    label: "Dashboard",
+    label: 'Dashboard',
     icon: <FaChartBar />,
-    path: "/",
-    permission: "dashboard:view",
+    path: '/',
+    permission: 'dashboard:view',
   },
   {
-    label: "Courses",
+    label: 'Courses',
     icon: <FaBook />,
-    permission: "courses:view",
+    permission: 'courses:view',
     children: [
-      { label: "All Courses", path: "/courses", permission: "courses:view" },
-      { label: "SQL Master 1000Q", path: "/courses/sql-master", permission: "courses:view" },
-      { label: "Enroll New", path: "/courses/enroll", permission: "courses:enroll" },
+      { label: 'All Courses', path: '/courses', permission: 'courses:view' },
+      { label: 'SQL Master 1000Q', path: '/courses/sql-master', permission: 'courses:view' },
+      { label: 'Enroll New', path: '/courses/enroll', permission: 'courses:enroll' },
     ],
   },
   {
-    label: "Modules",
+    label: 'Modules',
     icon: <FaLayerGroup />,
-    permission: "modules:view",
+    permission: 'modules:view',
     children: [
-      { label: "Basics", path: "/modules/basics", permission: "modules:view" },
-      { label: "Intermediate", path: "/modules/intermediate", permission: "modules:view" },
-      { label: "Advanced", path: "/modules/advanced", permission: "modules:view" },
-      { label: "Case Studies", path: "/modules/case-studies", permission: "modules:view" },
+      { label: 'Basics', path: '/modules/basics', permission: 'modules:view' },
+      { label: 'Intermediate', path: '/modules/intermediate', permission: 'modules:view' },
+      { label: 'Advanced', path: '/modules/advanced', permission: 'modules:view' },
+      { label: 'Case Studies', path: '/modules/case-studies', permission: 'modules:view' },
     ],
   },
   {
-    label: "Practice",
+    label: 'Practice',
     icon: <FaClipboardList />,
-    permission: "practice:view",
+    permission: 'practice:view',
     children: [
-      { label: "Quizzes", path: "/practice/quizzes", permission: "practice:quizzes" },
-      { label: "Assignments", path: "/practice/assignments", permission: "practice:assignments" },
-      { label: "Mock Tests", path: "/practice/mock-tests", permission: "practice:mocktests" },
+      { label: 'Quizzes', path: '/practice/quizzes', permission: 'practice:quizzes' },
+      { label: 'Assignments', path: '/practice/assignments', permission: 'practice:assignments' },
+      { label: 'Mock Tests', path: '/practice/mock-tests', permission: 'practice:mocktests' },
     ],
   },
-{
-  label: "Question Bank",
-  icon: <FaQuestionCircle />,
-  permission: "questions:view",
-  children: [
-    {
-      label: "Single Correct (SCQ)",
-      path: "/questions/scq",
-      permission: "questions:view",
-    },
-    {
-      label: "Multiple Correct (MCQ)",
-      path: "/questions/mcq-multiple",
-      permission: "questions:view",
-    },
-    {
-      label: "Numerical Answer Type (NAT)",
-      path: "/questions/nat",
-      permission: "questions:view",
-    },
-    {
-      label: "Matrix Match",
-      path: "/questions/matrix-match",
-      permission: "questions:view",
-    },
-    {
-      label: "Comprehension / Paragraph",
-      path: "/questions/comprehension",
-      permission: "questions:view",
-    },
-    {
-      label: "Assertion – Reason",
-      path: "/questions/assertion-reason",
-      permission: "questions:view",
-    },
-  ],
-},
   {
-    label: "Students",
-    icon: <FaUserGraduate />,
-    permission: "students:view",
+    label: 'Question Bank',
+    icon: <FaQuestionCircle />,
+    permission: 'questions:view',
     children: [
-      { label: "Student List", path: "/students", permission: "students:view" },
-      { label: "Progress Tracking", path: "/students/progress", permission: "students:progress" },
-      { label: "Certificates", path: "/students/certificates", permission: "students:certificates" },
+      {
+        label: 'Single Correct (SCQ)',
+        path: '/questions/scq',
+        permission: 'questions:view',
+      },
+      {
+        label: 'Multiple Correct (MCQ)',
+        path: '/questions/mcq-multiple',
+        permission: 'questions:view',
+      },
+      {
+        label: 'Numerical Answer Type (NAT)',
+        path: '/questions/nat',
+        permission: 'questions:view',
+      },
+      {
+        label: 'Matrix Match',
+        path: '/questions/matrix-match',
+        permission: 'questions:view',
+      },
+      {
+        label: 'Comprehension / Paragraph',
+        path: '/questions/comprehension',
+        permission: 'questions:view',
+      },
+      {
+        label: 'Assertion – Reason',
+        path: '/questions/assertion-reason',
+        permission: 'questions:view',
+      },
+    ],
+  },
+  {
+    label: 'Students',
+    icon: <FaUserGraduate />,
+    permission: 'students:view',
+    children: [
+      { label: 'Student List', path: '/students', permission: 'students:view' },
+      { label: 'Progress Tracking', path: '/students/progress', permission: 'students:progress' },
+      {
+        label: 'Certificates',
+        path: '/students/certificates',
+        permission: 'students:certificates',
+      },
     ],
   },
 
   // 🏏 New Cricket Section
   {
-    label: "Cricket",
+    label: 'Cricket',
     icon: <FaTrophy />,
-    permission: "cricket:view",
+    permission: 'cricket:view',
     children: [
-      { label: "Players", path: "/cricket/players", permission: "cricket:players" },
-      { label: "Search Players", path: "/cricket/players/search", permission: "cricket:players" },
-      { label: "Tournaments", path: "/cricket/tournaments", permission: "cricket:tournaments" },
+      { label: 'Players', path: '/cricket/players', permission: 'cricket:players' },
+      { label: 'Search Players', path: '/cricket/players/search', permission: 'cricket:players' },
+      { label: 'Tournaments', path: '/cricket/tournaments', permission: 'cricket:tournaments' },
     ],
   },
   {
-    label: "Election",
+    label: 'Election',
     icon: <FaVoteYea />,
-    permission: "election:view",
+    permission: 'election:view',
     children: [
-      { label: "Dashboard", path: "/election", permission: "election:view" },
-      { label: "Candidates", path: "/election/candidates", permission: "election:candidates" },
-      { label: "Voters", path: "/election/voters", permission: "election:voters" },
-      { label: "Voting Booth", path: "/election/voting", permission: "election:voting" },
-      { label: "Results", path: "/election/results", permission: "election:results" },
-      { label: "Admin Controls", path: "/election/admin", permission: "election:admin" },
+      { label: 'Dashboard', path: '/election', permission: 'election:view' },
+      { label: 'Candidates', path: '/election/candidates', permission: 'election:candidates' },
+      { label: 'Voters', path: '/election/voters', permission: 'election:voters' },
+      { label: 'Voting Booth', path: '/election/voting', permission: 'election:voting' },
+      { label: 'Results', path: '/election/results', permission: 'election:results' },
+      { label: 'Admin Controls', path: '/election/admin', permission: 'election:admin' },
     ],
   },
 
   {
-    label: "Administration",
+    label: 'Administration',
     icon: <FaCogs />,
-    permission: "admin:panel",
+    permission: 'admin:panel',
     children: [
-      { label: "Users", path: "/admin/users", permission: "admin:users" },
-      { label: "Roles", path: "/admin/roles", permission: "admin:roles" },
-      { label: "Permissions", path: "/admin/permissions", permission: "admin:permissions" },
-      { label: "Tenants Management", path: "/admin/tenants", permission: "admin:tenants" },
-      { label: "Subdomain Matrix", path: "/admin/subdomains", permission: "admin:subdomains" },
-      { label: "Plan Billing", path: "/admin/billing", permission: "admin:billing" },
-      { label: "System Configurations", path: "/admin/settings", permission: "admin:settings" },
+      { label: 'Users', path: '/admin/users', permission: 'admin:users' },
+      { label: 'Roles', path: '/admin/roles', permission: 'admin:roles' },
+      { label: 'Permissions', path: '/admin/permissions', permission: 'admin:permissions' },
+      { label: 'Tenants Management', path: '/admin/tenants', permission: 'admin:tenants' },
+      { label: 'Subdomain Matrix', path: '/admin/subdomains', permission: 'admin:subdomains' },
+      { label: 'Plan Billing', path: '/admin/billing', permission: 'admin:billing' },
+      { label: 'System Configurations', path: '/admin/settings', permission: 'admin:settings' },
     ],
   },
 ];

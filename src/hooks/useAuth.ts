@@ -21,7 +21,7 @@ export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const auth = useSelector((state: RootState) => state.auth);
-
+  console.log('auth', auth);
   return {
     // =========================================================================
     // STATE
@@ -66,7 +66,9 @@ export const useAuth = () => {
     // =========================================================================
 
     hasPermission: (permission: string) => {
-      return auth.permissions.includes(permission);
+      let _perm = auth.permissions.includes(permission);
+      console.log('_perm', _perm);
+      return _perm;
     },
 
     hasAnyPermission: (permissions: string[]) => {

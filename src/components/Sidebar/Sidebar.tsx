@@ -21,7 +21,9 @@ const Overlay = styled(motion.div)`
 const SidebarContainer = styled(motion.aside)<{ collapsed: boolean }>`
   width: ${({ collapsed }) => (collapsed ? "72px" : "240px")};
   height: 100vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background-color: ${({ theme }) => theme.DARKISH_GREEN};
   border-right: 1px solid ${({ theme }) => theme.GREY_DISABLED};
   position: fixed;
@@ -78,9 +80,11 @@ const UserEmail = styled.span`
 
 const NavSection = styled.div`
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
+  overflow-y: auto;
 `;
 
 const NavItemButton = styled.button<{ active: boolean }>`
@@ -144,9 +148,19 @@ const CollapseButton = styled.button<{ collapsed: boolean }>`
 `;
 
 const LogoutWrapper = styled.div`
-  position: absolute;
-  bottom: 1rem;
-  width: 100%;
+  flex-shrink: 0;
+  padding: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const LogoutButton = styled(NavItemButton)<{ collapsed: boolean }>`
+  justify-content: ${({ collapsed }) => (collapsed ? "center" : "flex-start")};
+  color: #e74c3c;
+
+  svg {
+    flex-shrink: 0;
+    margin-right: ${({ collapsed }) => (collapsed ? "0" : "12px")};
+  }
 `;
 
 const HamburgerButton = styled.button`
@@ -262,17 +276,17 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle, mobileOpen = fal
         <NavSection>{renderNavItems()}</NavSection>
 
         <LogoutWrapper>
-          <NavItemButton
+          <LogoutButton
             active={false}
+            collapsed={collapsed}
             onClick={() => {
               logout();
               if (isMobile && onMobileToggle) onMobileToggle();
             }}
-            style={{ justifyContent: collapsed ? "center" : "flex-start", color: "#e74c3c" }}
           >
             <FaSignOutAlt />
             {!collapsed && <span>Logout</span>}
-          </NavItemButton>
+          </LogoutButton>
         </LogoutWrapper>
       </SidebarContainer>
     </>

@@ -59,6 +59,7 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   hideIfUnauthorized = false,
   fallback = null,
 }) => {
+  console.log('permission', permission);
   const location = useLocation();
 
   const {
@@ -103,7 +104,7 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   if (permission) {
     authorized = hasPermission(permission);
   }
-
+  console.log('authorized', authorized);
   if (authorized && anyOf.length > 0) {
     authorized = hasAnyPermission(anyOf);
   }
