@@ -6,13 +6,18 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
     host: true, // Allows listening across your local domains
-    allowedHosts: ['.syncware.local'], // ✅ Fixes the "Blocked request" error for dev mode
+    allowedHosts: ['.syncware.local'], // Fixes the "Blocked request" error for local development mode
   },
   build: {
-    outDir: 'dist', // Render serves from here
+    outDir: 'dist', // Render serves standard production files from here
   },
   preview: {
-    allowedHosts: ['web-ui-d5g8.onrender.com', 'syncware.fun', '.syncware.local'], // Allow your Render domain in preview mode
+    allowedHosts: [
+      'web-ui-d5g8.onrender.com',
+      'syncware.fun',
+      '.syncware.fun', // ✅ Whitelists all production subdomains like mela2026.syncware.fun
+      '.syncware.local',
+    ],
     port: 4173,
   },
 });

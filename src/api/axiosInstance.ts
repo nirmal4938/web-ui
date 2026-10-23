@@ -1,15 +1,10 @@
 // ===================================================================================
 // src/api/axiosInstance.ts
 // Enterprise Ready Axios Instance
-// SyncWare SaaS v2
+// SyncWare SaaS v2 - Production Ready
 // ===================================================================================
 
-import axios, {
-  AxiosError,
-  type AxiosInstance,
-  type AxiosRequestConfig,
-  type InternalAxiosRequestConfig,
-} from 'axios';
+import axios, { AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
 import { store } from '@/state/store/store';
 import { logout } from '@/state/actions/authActions';
@@ -27,7 +22,7 @@ let isRefreshing = false;
 let failedQueue: QueuePromise[] = [];
 
 /**
- * Resolve queued requests after refresh
+ * Resolve queued requests after token refresh
  */
 const processQueue = (error: unknown = null, token: string | null = null) => {
   failedQueue.forEach(promise => {
@@ -37,13 +32,17 @@ const processQueue = (error: unknown = null, token: string | null = null) => {
       promise.resolve(token);
     }
   });
-
   failedQueue = [];
 };
 
-const API_URL = import.meta.env.VITE_DEV_API_BASE_URL;
-('http://localhost:5000/api');
-console.log('API_URL', API_URL);
+// ✅ Dynamic URL resolution: Determines production vs development environment endpoints automatically
+const API_URL =
+  import.meta.env.MODE === 'production'
+    ? import.meta.env.VITE_PROD_API_BASE_URL
+    : import.meta.env.VITE_DEV_API_BASE_URL;
+
+console.log('Syncware Core Routing Gateway Active:', API_URL);
+
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 30000,
@@ -62,13 +61,11 @@ axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const reduxToken = store.getState().auth.token;
     const storageToken = localStorage.getItem('token');
-
     const token = reduxToken || storageToken;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   error => Promise.reject(error)
@@ -80,7 +77,6 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   response => response,
-
   async (error: AxiosError) => {
     const originalRequest = error.config as RetryRequest;
 
@@ -91,20 +87,14 @@ axiosInstance.interceptors.response.use(
     /////////////////////////////////////////////////////////////////////////////
     // Ignore refresh endpoint loop
     /////////////////////////////////////////////////////////////////////////////
-
     if (originalRequest.url?.includes('/auth/refresh')) {
       return Promise.reject(error);
     }
 
     /////////////////////////////////////////////////////////////////////////////
-    // Unauthorized
+    // Unauthorized Handler (Token Expired)
     /////////////////////////////////////////////////////////////////////////////
-
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-      ///////////////////////////////////////////////////////////////////////////
-      // Already Refreshing
-      ///////////////////////////////////////////////////////////////////////////
-
+    if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
@@ -117,10 +107,6 @@ axiosInstance.interceptors.response.use(
         });
       }
 
-      ///////////////////////////////////////////////////////////////////////////
-      // Start Refresh
-      ///////////////////////////////////////////////////////////////////////////
-
       originalRequest._retry = true;
       isRefreshing = true;
 
@@ -128,14 +114,8 @@ axiosInstance.interceptors.response.use(
         const refreshResponse = await axios.post(
           `${API_URL}/auth/refresh`,
           {},
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
-
-        /////////////////////////////////////////////////////////////////////////
-        // Backend should return accessToken
-        /////////////////////////////////////////////////////////////////////////
 
         const accessToken = refreshResponse.data.accessToken || refreshResponse.data.token;
 
@@ -143,24 +123,13 @@ axiosInstance.interceptors.response.use(
           throw new Error('No access token returned.');
         }
 
-        /////////////////////////////////////////////////////////////////////////
-        // Save Token
-        /////////////////////////////////////////////////////////////////////////
-
         localStorage.setItem('token', accessToken);
-
         processQueue(null, accessToken);
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        /////////////////////////////////////////////////////////////////////////
-        // Refresh Failed
-        /////////////////////////////////////////////////////////////////////////
-
         processQueue(refreshError);
-
         localStorage.removeItem('token');
         localStorage.removeItem('user');
 
@@ -168,34 +137,21 @@ axiosInstance.interceptors.response.use(
           store.dispatch<any>(logout());
         } catch (_) {}
 
-        /////////////////////////////////////////////////////////////////////////
-        // Redirect Login
-        /////////////////////////////////////////////////////////////////////////
-
         if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
           window.location.href = '/login';
         }
-
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    /////////////////////////////////////////////////////////////////////////////
-    // Forbidden (Authenticated but Unauthorized)
-    /////////////////////////////////////////////////////////////////////////////
-
     if (error.response?.status === 403) {
       console.warn('Access Denied (403)');
     }
 
-    /////////////////////////////////////////////////////////////////////////////
-    // Server Error
-    /////////////////////////////////////////////////////////////////////////////
-
     if (error.response?.status === 500) {
-      console.error('Internal Server Error');
+      console.error('Internal Server Error (500)');
     }
 
     return Promise.reject(error);
